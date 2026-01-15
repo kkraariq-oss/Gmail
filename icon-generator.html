@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد أيقونات Cash Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .controls {
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="color"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="color"] {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .preview {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .preview-item {
+            text-align: center;
+        }
+
+        canvas {
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .size-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #45a049;
+        }
+
+        .instructions {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-right: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 مولد أيقونات Cash Pro</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>النص الرئيسي:</label>
+                <input type="text" id="mainText" value="CP" maxlength="3">
+            </div>
+
+            <div class="control-group">
+                <label>النص الفرعي:</label>
+                <input type="text" id="subText" value="Cash Pro" maxlength="15">
+            </div>
+
+            <div class="control-group">
+                <label>لون الخلفية:</label>
+                <input type="color" id="bgColor" value="#667eea">
+            </div>
+
+            <div class="control-group">
+                <label>لون النص:</label>
+                <input type="color" id="textColor" value="#ffffff">
+            </div>
+
+            <div class="control-group">
+                <label>الرمز:</label>
+                <select id="icon">
+                    <option value="🍽️">🍽️ طبق</option>
+                    <option value="🏪">🏪 متجر</option>
+                    <option value="💰">💰 نقود</option>
+                    <option value="🍴">🍴 شوكة وسكين</option>
+                    <option value="☕">☕ قهوة</option>
+                    <option value="🍔">🍔 برجر</option>
+                    <option value="🍕">🍕 بيتزا</option>
+                    <option value="🎂">🎂 كيك</option>
+                    <option value="">بدون رمز</option>
+                </select>
+            </div>
+
+            <button onclick="generateIcons()">🎨 توليد الأيقونات</button>
+        </div>
+
+        <div class="preview" id="preview"></div>
+
+        <div class="instructions">
+            <h3>📋 التعليمات:</h3>
+            <ol>
+                <li>اختر النص والألوان والرمز المناسب</li>
+                <li>اضغط زر "توليد الأيقونات"</li>
+                <li>انقر بالزر الأيمن على كل صورة → "حفظ الصورة باسم"</li>
+                <li>احفظ الصور بالأسماء الصحيحة:
+                    <ul>
+                        <li>icon-72x72.png</li>
+                        <li>icon-96x96.png</li>
+                        <li>icon-128x128.png</li>
+                        <li>icon-144x144.png</li>
+                        <li>icon-152x152.png</li>
+                        <li>icon-192x192.png</li>
+                        <li>icon-384x384.png</li>
+                        <li>icon-512x512.png</li>
+                    </ul>
+                </li>
+                <li>ضع الصور في مجلد "icons" في التطبيق</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+        function generateIcons() {
+            const mainText = document.getElementById('mainText').value;
+            const subText = document.getElementById('subText').value;
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const icon = document.getElementById('icon').value;
+            
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+
+            sizes.forEach(size => {
+                const container = document.createElement('div');
+                container.className = 'preview-item';
+
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // خلفية
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, size, size);
+
+                // دائرة زخرفية
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.arc(size * 0.7, size * 0.3, size * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = textColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // رمز emoji
+                if (icon) {
+                    ctx.font = `${size * 0.3}px Arial`;
+                    ctx.fillText(icon, size / 2, size * 0.35);
+                }
+
+                // النص الرئيسي
+                if (mainText) {
+                    ctx.font = `bold ${size * 0.25}px Arial`;
+                    ctx.fillText(mainText, size / 2, size * (icon ? 0.6 : 0.45));
+                }
+
+                // النص الفرعي
+                if (subText && size >= 192) {
+                    ctx.font = `${size * 0.1}px Arial`;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.fillText(subText, size / 2, size * 0.8);
+                }
+
+                // إضافة الكانفاس
+                container.appendChild(canvas);
+
+                // Label
+                const label = document.createElement('div');
+                label.className = 'size-label';
+                label.textContent = `${size}x${size}`;
+                container.appendChild(label);
+
+                // زر تحميل
+                const downloadBtn = document.createElement('a');
+                downloadBtn.className = 'download-btn';
+                downloadBtn.textContent = '⬇️ تحميل';
+                downloadBtn.href = canvas.toDataURL('image/png');
+                downloadBtn.download = `icon-${size}x${size}.png`;
+                container.appendChild(downloadBtn);
+
+                preview.appendChild(container);
+            });
+        }
+
+        // توليد تلقائي عند تحميل الصفحة
+        window.addEventListener('load', generateIcons);
+
+        // تحديث مباشر عند تغيير القيم
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('input', generateIcons);
+        });
+    </script>
+</body>
+</html>

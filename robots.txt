@@ -1,0 +1,17 @@
+# Cash Pro - Robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Disallow admin pages (إذا كانت موجودة)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Host (استبدل بدومين موقعك)
+# Host: https://yourdomain.com

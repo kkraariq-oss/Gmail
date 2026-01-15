@@ -1,0 +1,60 @@
+{
+  "name": "cash-pro-restaurant",
+  "version": "1.0.0",
+  "description": "نظام إدارة المطاعم الاحترافي - Cash Pro",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "build-all": "electron-builder -mwl"
+  },
+  "keywords": [
+    "restaurant",
+    "pos",
+    "management",
+    "cash-pro"
+  ],
+  "author": "Digital Creativity Company - شركة الإبداع الرقمي",
+  "license": "Commercial",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
+  },
+  "build": {
+    "appId": "com.digitalcreativity.cashpro",
+    "productName": "Cash Pro",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "icon.icns",
+      "category": "public.app-category.business"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "icon.png",
+      "category": "Office"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Cash Pro"
+    }
+  }
+}
