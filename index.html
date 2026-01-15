@@ -2542,6 +2542,12 @@
             console.log('Firebase initialization:', error.message);
         }
 
+        // ثوابت النظام
+        const COMPANY_WHATSAPP = '9647813798636'; // رقم الشركة
+        const TRIAL_DAYS = 7;
+        const YEARLY_SUBSCRIPTION_DAYS = 365;
+        const SUBSCRIPTION_PRICE = 100; // دولار
+
         // نظام التخزين المحلي
         const LocalDB = {
             KEYS: {
@@ -2557,7 +2563,9 @@
                 SUSPENDED_ORDERS: 'restaurant_suspended_orders',
                 CURRENT_USER: 'restaurant_current_user',
                 CLOUD_CONFIG: 'restaurant_cloud_config',
-                SUBSCRIPTION_CODE: 'restaurant_subscription_code'
+                SUBSCRIPTION_CODE: 'restaurant_subscription_code',
+                APP_REGISTRATION: 'restaurant_app_registration',
+                ACTIVATION_DATA: 'restaurant_activation_data'
             },
 
             save(key, data) {
@@ -2586,6 +2594,303 @@
         let selectedProduct = null;
         let currentUser = null;
         let userPermissions = [];
+
+        // ==================== نظام التسجيل والتفعيل ====================
+        
+        // التحقق من حالة التسجيل عند بدء التطبيق
+        function checkAppRegistration() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            
+            if (!registration) {
+                // تطبيق جديد - عرض شاشة التسجيل
+                showRegistrationScreen();
+                return false;
+            }
+
+            // التحقق من حالة الاشتراك
+            return checkSubscriptionStatus(registration);
+        }
+
+        function showRegistrationScreen() {
+            document.getElementById('registrationScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        // حفظ التسجيل الأولي
+        function submitInitialRegistration(event) {
+            event.preventDefault();
+
+            const registrationData = {
+                restaurantName: document.getElementById('regRestaurantName').value,
+                ownerName: document.getElementById('regOwnerName').value,
+                phone: document.getElementById('regPhone').value,
+                address: document.getElementById('regAddress').value,
+                registrationDate: new Date().toISOString(),
+                trialStartDate: new Date().toISOString(),
+                trialEndDate: new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString(),
+                status: 'trial', // trial, active, expired
+                machineId: generateMachineId(),
+                activationCode: null
+            };
+
+            // حفظ البيانات محلياً
+            LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registrationData);
+
+            // إرسال البيانات عبر WhatsApp
+            sendRegistrationToWhatsApp(registrationData);
+
+            // رفع البيانات إلى Firebase
+            if (firebaseDB) {
+                const appRef = firebaseDB.ref('registrations/' + registrationData.machineId);
+                appRef.set({
+                    ...registrationData,
+                    needsActivation: true
+                }).catch(err => console.error('Firebase save error:', err));
+            }
+
+            // إخفاء شاشة التسجيل وإظهار تسجيل الدخول
+            document.getElementById('registrationScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            
+            showNotification(`مرحباً بك! لديك ${TRIAL_DAYS} أيام فترة تجريبية مجانية`, 'success');
+        }
+
+        // توليد معرف فريد للجهاز
+        function generateMachineId() {
+            let machineId = LocalDB.get('machine_id');
+            if (!machineId) {
+                machineId = 'MACHINE_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                LocalDB.save('machine_id', machineId);
+            }
+            return machineId;
+        }
+
+        // إرسال بيانات التسجيل عبر WhatsApp
+        function sendRegistrationToWhatsApp(data) {
+            const message = `
+🆕 *تسجيل جديد - نظام Cash Pro*
+━━━━━━━━━━━━━━━━━━
+🏪 *اسم المطعم:* ${data.restaurantName}
+👤 *اسم المالك:* ${data.ownerName}
+📱 *رقم الهاتف:* ${data.phone}
+📍 *العنوان:* ${data.address}
+🖥️ *معرف الجهاز:* ${data.machineId}
+📅 *تاريخ التسجيل:* ${formatDate(data.registrationDate)}
+⏰ *نهاية الفترة التجريبية:* ${formatDate(data.trialEndDate)}
+━━━━━━━━━━━━━━━━━━
+⚠️ *يرجى إنشاء كود تفعيل للعميل*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // التحقق من حالة الاشتراك
+        function checkSubscriptionStatus(registration) {
+            const now = new Date();
+            const trialEnd = new Date(registration.trialEndDate);
+
+            if (registration.status === 'active' && registration.activationCode) {
+                // اشتراك نشط - التحقق من تاريخ الانتهاء
+                if (registration.subscriptionEndDate) {
+                    const subEnd = new Date(registration.subscriptionEndDate);
+                    if (now > subEnd) {
+                        // انتهى الاشتراك - طلب التجديد
+                        showRenewalScreen();
+                        return false;
+                    }
+                }
+                return true; // اشتراك نشط
+            }
+
+            if (registration.status === 'trial') {
+                if (now > trialEnd) {
+                    // انتهت الفترة التجريبية
+                    showTrialExpiredScreen();
+                    return false;
+                }
+                // لا زال في الفترة التجريبية
+                const daysLeft = Math.ceil((trialEnd - now) / (24 * 60 * 60 * 1000));
+                console.log(`أيام متبقية من الفترة التجريبية: ${daysLeft}`);
+                return true;
+            }
+
+            // حالة غير معروفة
+            showTrialExpiredScreen();
+            return false;
+        }
+
+        // عرض شاشة انتهاء الفترة التجريبية
+        function showTrialExpiredScreen() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            
+            document.getElementById('expiredTitle').textContent = 'انتهت الفترة التجريبية';
+            document.getElementById('trialExpiredMessage').innerHTML = `
+                عزيزي <strong>${registration.ownerName}</strong>،<br>
+                لقد انتهت الفترة التجريبية البالغة ${TRIAL_DAYS} أيام لمطعم <strong>${registration.restaurantName}</strong>.
+            `;
+            
+            document.getElementById('trialExpiredScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        // عرض شاشة تجديد الاشتراك
+        function showRenewalScreen() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            
+            document.getElementById('expiredTitle').textContent = 'انتهى الاشتراك السنوي';
+            document.getElementById('trialExpiredMessage').innerHTML = `
+                عزيزي <strong>${registration.ownerName}</strong>،<br>
+                لقد انتهى اشتراكك السنوي لمطعم <strong>${registration.restaurantName}</strong>.<br>
+                لتجديد الاشتراك، يرجى دفع <strong>${SUBSCRIPTION_PRICE} دولار</strong> والحصول على رمز تفعيل جديد.
+            `;
+            
+            document.getElementById('trialExpiredScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        // التواصل مع الشركة عبر WhatsApp للحصول على كود التفعيل
+        function contactCompanyForActivation() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            
+            const message = `
+🔑 *طلب تفعيل - نظام Cash Pro*
+━━━━━━━━━━━━━━━━━━
+🏪 *اسم المطعم:* ${registration.restaurantName}
+👤 *اسم المالك:* ${registration.ownerName}
+📱 *رقم الهاتف:* ${registration.phone}
+🖥️ *معرف الجهاز:* ${registration.machineId}
+━━━━━━━━━━━━━━━━━━
+⚠️ *أرغب في الحصول على رمز التفعيل*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            return false;
+        }
+
+        // تفعيل الاشتراك بالكود
+        function activateWithCode(event) {
+            event.preventDefault();
+            
+            const code = document.getElementById('activationCode').value.trim().toUpperCase();
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+
+            if (!code) {
+                showNotification('يرجى إدخال رمز التفعيل', 'error');
+                return;
+            }
+
+            // التحقق من الكود في Firebase
+            if (firebaseDB) {
+                const activationRef = firebaseDB.ref('activations/' + registration.machineId);
+                activationRef.once('value').then(snapshot => {
+                    const activationData = snapshot.val();
+                    
+                    if (activationData && activationData.code === code && activationData.valid) {
+                        // كود صحيح - تفعيل الاشتراك
+                        registration.status = 'active';
+                        registration.activationCode = code;
+                        registration.activationDate = new Date().toISOString();
+                        registration.subscriptionEndDate = new Date(Date.now() + YEARLY_SUBSCRIPTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+                        
+                        LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                        
+                        // تحديث حالة التفعيل في Firebase
+                        activationRef.update({ used: true, usedAt: new Date().toISOString() });
+                        
+                        document.getElementById('trialExpiredScreen').classList.add('hidden');
+                        document.getElementById('loginScreen').classList.remove('hidden');
+                        
+                        showNotification('تم التفعيل بنجاح! مرحباً بك', 'success');
+                    } else {
+                        showNotification('رمز التفعيل غير صحيح', 'error');
+                    }
+                }).catch(err => {
+                    console.error('Activation check error:', err);
+                    showNotification('خطأ في التحقق من رمز التفعيل', 'error');
+                });
+            } else {
+                showNotification('لا يمكن التحقق من رمز التفعيل بدون اتصال بالإنترنت', 'error');
+            }
+        }
+
+        // إعادة الاتصال بالسحابة باستخدام الكود
+        function reconnectWithCode() {
+            const code = prompt('أدخل كود الاشتراك الخاص بك:');
+            
+            if (!code) return;
+            
+            const cleanCode = code.trim().toUpperCase().replace(/\s+/g, '');
+            
+            if (firebaseDB) {
+                // البحث عن المستخدم بالكود
+                const subscriptionsRef = firebaseDB.ref('restaurants');
+                subscriptionsRef.orderByChild('subscriptionCode').equalTo(cleanCode).once('value')
+                    .then(snapshot => {
+                        if (snapshot.exists()) {
+                            const userData = Object.values(snapshot.val())[0];
+                            const userId = Object.keys(snapshot.val())[0];
+                            
+                            // حفظ بيانات الاتصال
+                            const cloudConfig = {
+                                username: userData.config?.username || 'User',
+                                phone: userData.config?.phone || '',
+                                restaurantName: userData.config?.restaurantName || '',
+                                address: userData.config?.address || '',
+                                subscriptionCode: cleanCode,
+                                userId: userId,
+                                active: true,
+                                reconnectedAt: new Date().toISOString()
+                            };
+                            
+                            LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
+                            currentUserId = userId;
+                            
+                            // مزامنة البيانات
+                            syncFromCloud(userId);
+                            
+                            showNotification('تم الاتصال بنجاح!', 'success');
+                            updateCloudStatus();
+                        } else {
+                            showNotification('كود الاشتراك غير صحيح', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Reconnect error:', err);
+                        showNotification('خطأ في الاتصال', 'error');
+                    });
+            }
+        }
+
+        // مزامنة البيانات من السحابة
+        function syncFromCloud(userId) {
+            if (!firebaseDB) return;
+            
+            const userRef = firebaseDB.ref('restaurants/' + userId);
+            userRef.once('value').then(snapshot => {
+                const cloudData = snapshot.val();
+                
+                if (cloudData) {
+                    // استيراد البيانات (بدون الصور)
+                    if (cloudData.products) LocalDB.save(LocalDB.KEYS.PRODUCTS, cloudData.products);
+                    if (cloudData.categories) LocalDB.save(LocalDB.KEYS.CATEGORIES, cloudData.categories);
+                    if (cloudData.invoices) LocalDB.save(LocalDB.KEYS.INVOICES, cloudData.invoices);
+                    if (cloudData.expenses) LocalDB.save(LocalDB.KEYS.EXPENSES, cloudData.expenses);
+                    if (cloudData.employees) LocalDB.save(LocalDB.KEYS.EMPLOYEES, cloudData.employees);
+                    if (cloudData.users) LocalDB.save(LocalDB.KEYS.USERS, cloudData.users);
+                    if (cloudData.settings) LocalDB.save(LocalDB.KEYS.SETTINGS, cloudData.settings);
+                    
+                    showNotification('تم تحميل البيانات من السحابة', 'success');
+                    updateDashboardStats();
+                }
+            }).catch(err => {
+                console.error('Sync from cloud error:', err);
+            });
+        }
 
         // نظام الثيمات
         function toggleTheme() {
@@ -2719,6 +3024,9 @@
                 
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                document.getElementById('refreshBtn').classList.remove('hidden');
+                
                 showNotification('تم تسجيل الدخول بنجاح', 'success');
                 updateDashboardStats();
                 checkUserPermissions();
@@ -2735,6 +3043,9 @@
                 
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                document.getElementById('refreshBtn').classList.remove('hidden');
+                
                 showNotification('تم تسجيل الدخول بنجاح', 'success');
                 updateDashboardStats();
                 checkUserPermissions();
@@ -2743,11 +3054,35 @@
             }
         }
 
+        // تسجيل الخروج
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                LocalDB.save(LocalDB.KEYS.CURRENT_USER, null);
+                currentUser = null;
+                userPermissions = [];
+                
+                document.getElementById('dashboard').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.add('hidden');
+                document.getElementById('refreshBtn').classList.add('hidden');
+                
+                showNotification('تم تسجيل الخروج بنجاح', 'success');
+            }
+        }
+
+        // تحديث التطبيق
+        function refreshApp() {
+            if (confirm('سيتم تحديث التطبيق وإعادة تحميل البيانات. هل تريد المتابعة؟')) {
+                location.reload();
+            }
+        }
+
         // التحقق من صلاحيات المستخدم
         function checkUserPermissions() {
             currentUser = LocalDB.get(LocalDB.KEYS.CURRENT_USER);
             if (!currentUser) return;
 
+            // تعيين الصلاحيات من بيانات المستخدم فقط
             userPermissions = currentUser.permissions || [];
 
             // إخفاء قسم المستخدمين إذا لم يكن admin
@@ -2756,29 +3091,57 @@
                 if (usersCard) usersCard.style.display = 'none';
             }
 
-            // تطبيق الصلاحيات على الأزرار
-            applyPermissionsToButtons();
+            // تطبيق الصلاحيات على الأزرار والأقسام
+            applyPermissionsToUI();
         }
 
-        // تطبيق الصلاحيات على الأزرار
-        function applyPermissionsToButtons() {
-            if (currentUser.role === 'admin' || userPermissions.includes('all')) {
-                return; // المدير له كل الصلاحيات
+        // تطبيق الصلاحيات على واجهة المستخدم
+        function applyPermissionsToUI() {
+            if (currentUser.role === 'admin') {
+                return; // المدير له كل الصلاحيات - لا حاجة لإخفاء شيء
             }
 
-            // تعطيل الأزرار حسب الصلاحيات
-            document.querySelectorAll('[data-permission]').forEach(button => {
-                const permission = button.getAttribute('data-permission');
-                if (!userPermissions.includes(permission)) {
-                    button.style.display = 'none';
+            // إخفاء الأزرار بناءً على الصلاحيات
+            const permissionMap = {
+                'products_add': '.btn-add-product, [onclick*="showAddProductModal"]',
+                'products_edit': '.btn-edit-product, [onclick*="editProduct"]',
+                'products_delete': '.btn-delete-product, [onclick*="deleteProduct"]',
+                'expenses_add': '[onclick*="showAddExpenseModal"]',
+                'expenses_edit': '.btn-edit-expense, [onclick*="editExpense"]',
+                'expenses_delete': '.btn-delete-expense, [onclick*="deleteExpense"]',
+                'settings_access': '.section-card[onclick*="settingsPage"]',
+                'reports_view': '.section-card[onclick*="reportsPage"]',
+                'backup_access': '.section-card[onclick*="backupPage"]',
+                'pos_access': '.section-card[onclick*="posPage"]'
+            };
+
+            // إخفاء العناصر التي لا يملك المستخدم صلاحية لها
+            Object.keys(permissionMap).forEach(permission => {
+                if (!userPermissions.includes(permission) && !userPermissions.includes('all')) {
+                    const selector = permissionMap[permission];
+                    document.querySelectorAll(selector).forEach(el => {
+                        if (el) el.style.display = 'none';
+                    });
                 }
             });
+
+            // إخفاء الأقسام الكاملة إذا لم يكن لديه صلاحية
+            if (!hasPermission('products_view') && !hasPermission('products_add')) {
+                const productsCard = document.querySelector('.section-card[onclick*="productsPage"]');
+                if (productsCard) productsCard.style.display = 'none';
+            }
+
+            if (!hasPermission('expenses_view') && !hasPermission('expenses_add')) {
+                const expensesCard = document.querySelector('.section-card[onclick*="expensesPage"]');
+                if (expensesCard) expensesCard.style.display = 'none';
+            }
         }
 
         // التحقق من صلاحية معينة
         function hasPermission(permission) {
             if (!currentUser) return false;
             if (currentUser.role === 'admin') return true;
+            if (!userPermissions || userPermissions.length === 0) return false; // إذا لم يكن لديه صلاحيات - لا يستطيع فعل شيء
             return userPermissions.includes(permission) || userPermissions.includes('all');
         }
 
@@ -2837,6 +3200,7 @@
             LocalDB.save(LocalDB.KEYS.USERS, users);
             closeModal('userModal');
             loadUsers();
+            autoSyncToCloud(); // مزامنة تلقائية
         }
 
         function loadUsers() {
@@ -3380,6 +3744,7 @@
             LocalDB.save(LocalDB.KEYS.EMPLOYEES, employees);
             closeModal('employeeModal');
             loadEmployees();
+            autoSyncToCloud(); // مزامنة تلقائية
             event.target.reset();
         }
 
@@ -3776,6 +4141,7 @@
             LocalDB.save(LocalDB.KEYS.CART, currentCart);
             updateCart();
             updateDashboardStats();
+            autoSyncToCloud(); // مزامنة تلقائية
 
             showNotification('تمت عملية البيع بنجاح', 'success');
         }
@@ -3840,6 +4206,7 @@
             closeModal('productModal');
             loadProducts();
             updateProductStats();
+            autoSyncToCloud(); // مزامنة تلقائية
             event.target.reset();
         }
 
@@ -4057,6 +4424,7 @@
             LocalDB.save(LocalDB.KEYS.CATEGORIES, categories);
             closeModal('categoryModal');
             loadCategories();
+            autoSyncToCloud(); // مزامنة تلقائية
             event.target.reset();
         }
 
@@ -4189,6 +4557,7 @@
             closeModal('expenseModal');
             loadExpenses();
             updateDashboardStats();
+            autoSyncToCloud(); // مزامنة تلقائية
             event.target.reset();
         }
 
@@ -4861,23 +5230,31 @@
             const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
             
             if (!cloudConfig || !cloudConfig.active) {
-                showNotification('يرجى الاشتراك في الخدمة أولاً', 'warning');
-                return;
+                return; // لا تزامن إذا لم يكن مفعل
             }
 
             if (!firebaseDB) {
-                showNotification('فشل الاتصال بالخدمة السحابية', 'error');
+                console.log('Firebase not available');
                 return;
             }
 
-            showNotification('جاري المزامنة...', 'info');
+            // جمع البيانات (بدون الصور)
+            const products = (LocalDB.get(LocalDB.KEYS.PRODUCTS) || []).map(p => ({
+                ...p,
+                image: null // إزالة الصور
+            }));
+
+            const employees = (LocalDB.get(LocalDB.KEYS.EMPLOYEES) || []).map(e => ({
+                ...e,
+                image: null // إزالة الصور
+            }));
 
             const allData = {
-                products: LocalDB.get(LocalDB.KEYS.PRODUCTS) || [],
+                products: products,
                 categories: LocalDB.get(LocalDB.KEYS.CATEGORIES) || [],
                 invoices: LocalDB.get(LocalDB.KEYS.INVOICES) || [],
                 expenses: LocalDB.get(LocalDB.KEYS.EXPENSES) || [],
-                employees: LocalDB.get(LocalDB.KEYS.EMPLOYEES) || [],
+                employees: employees,
                 users: LocalDB.get(LocalDB.KEYS.USERS) || [],
                 settings: LocalDB.get(LocalDB.KEYS.SETTINGS) || {},
                 config: {
@@ -4886,6 +5263,7 @@
                     address: cloudConfig.address,
                     username: cloudConfig.username
                 },
+                subscriptionCode: cloudConfig.subscriptionCode,
                 lastUpdated: new Date().toISOString()
             };
 
@@ -4896,12 +5274,29 @@
                     cloudConfig.lastSync = new Date().toISOString();
                     LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
                     updateCloudStatus();
-                    showNotification(isFirstSync ? 'تم رفع البيانات بنجاح' : 'تمت المزامنة بنجاح', 'success');
+                    if (!isFirstSync) {
+                        console.log('تمت المزامنة التلقائية');
+                    }
                 })
                 .catch((error) => {
                     console.error('Sync error:', error);
-                    showNotification('فشلت عملية المزامنة', 'error');
                 });
+        }
+
+        // مزامنة تلقائية عند حفظ البيانات
+        function autoSyncToCloud() {
+            const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+            if (cloudConfig && cloudConfig.active) {
+                syncToCloud();
+            }
+        }
+
+        // تحديث دالة حفظ المنتج للمزامنة التلقائية
+        function saveProductWithSync(productData) {
+            const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+            // ... حفظ المنتج ...
+            LocalDB.save(LocalDB.KEYS.PRODUCTS, products);
+            autoSyncToCloud(); // مزامنة تلقائية
         }
 
         function disconnectCloud() {
@@ -4993,11 +5388,21 @@
             loadTheme();
             loadSettings();
             
+            // التحقق من التسجيل الأولي
+            const isRegistered = checkAppRegistration();
+            
+            if (!isRegistered) {
+                // التطبيق غير مسجل أو انتهت الفترة
+                return;
+            }
+            
             // التحقق من المستخدم المسجل دخوله
             currentUser = LocalDB.get(LocalDB.KEYS.CURRENT_USER);
             if (currentUser) {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('logoutBtn').classList.remove('hidden');
+                document.getElementById('refreshBtn').classList.remove('hidden');
                 checkUserPermissions();
                 updateCloudStatus();
             }
