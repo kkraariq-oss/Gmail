@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة المطعم - Restaurant Management System</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="نظام إدارة المطاعم الاحترافي - Cash Pro من شركة الإبداع الرقمي">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Cash Pro">
+    <meta name="application-name" content="Cash Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -1417,6 +1437,14 @@
                 </div>
 
                 <div class="sections-grid">
+                    <div class="section-card" onclick="showPage('myAccountPage')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="section-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h4>حسابي</h4>
+                        <p>معلومات الحساب والاشتراك</p>
+                    </div>
+
                     <div class="section-card" onclick="showPage('posPage')">
                         <div class="section-icon">
                             <i class="fas fa-cash-register"></i>
@@ -1963,6 +1991,109 @@
                 </div>
             </div>
 
+            <!-- صفحة حسابي -->
+            <div id="myAccountPage" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <button onclick="showPage('homePage')" class="btn-back">
+                        <i class="fas fa-arrow-right"></i> رجوع
+                    </button>
+                    <h2><i class="fas fa-user-circle"></i> حسابي</h2>
+                </div>
+
+                <div class="account-container" style="max-width: 900px; margin: 0 auto;">
+                    <!-- بطاقة معلومات المطعم -->
+                    <div class="info-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="font-size: 60px;">🏪</div>
+                            <div style="flex: 1;">
+                                <h2 id="accountRestaurantName" style="margin: 0 0 10px 0; color: white;">اسم المطعم</h2>
+                                <p id="accountOwnerName" style="margin: 5px 0; opacity: 0.9;">المالك: ---</p>
+                                <p id="accountPhone" style="margin: 5px 0; opacity: 0.9;">📱 ---</p>
+                                <p id="accountAddress" style="margin: 5px 0; opacity: 0.9;">📍 ---</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بطاقة حالة الاشتراك -->
+                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                            <i class="fas fa-certificate"></i> حالة الاشتراك
+                        </h3>
+                        <div id="subscriptionStatus" style="margin-top: 20px;">
+                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
+                                <span style="font-weight: 600;">حالة التطبيق:</span>
+                                <span id="appStatus" style="padding: 5px 15px; border-radius: 20px; background: #28a745; color: white;">نشط</span>
+                            </div>
+                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
+                                <span style="font-weight: 600;">تاريخ التسجيل:</span>
+                                <span id="registrationDate">---</span>
+                            </div>
+                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
+                                <span style="font-weight: 600;">نهاية الفترة التجريبية:</span>
+                                <span id="trialEndDate">---</span>
+                            </div>
+                            <div class="status-row" id="subscriptionEndRow" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px; display: none;">
+                                <span style="font-weight: 600;">نهاية الاشتراك السنوي:</span>
+                                <span id="subscriptionEndDate">---</span>
+                            </div>
+                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                                <span style="font-weight: 600;">الأيام المتبقية:</span>
+                                <span id="daysRemaining" style="font-size: 18px; font-weight: bold; color: #28a745;">---</span>
+                            </div>
+                        </div>
+
+                        <!-- زر تفعيل الاشتراك السنوي -->
+                        <div id="yearlyActivationSection" style="margin-top: 20px; display: none;">
+                            <button onclick="requestYearlyActivation()" class="btn-primary" style="width: 100%; padding: 15px; font-size: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <i class="fas fa-key"></i> طلب تفعيل الاشتراك السنوي (100 دولار)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- بطاقة النسخ السحابي -->
+                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                            <i class="fas fa-cloud"></i> النسخ الاحتياطي السحابي
+                        </h3>
+                        <div id="cloudBackupStatus" style="margin-top: 20px;">
+                            <!-- سيتم ملؤه ديناميكياً -->
+                        </div>
+
+                        <!-- أزرار الإدارة -->
+                        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="subscribeCloudBtn" onclick="showCloudSubscriptionModal()" class="btn-primary" style="flex: 1; padding: 12px;">
+                                <i class="fas fa-cloud-upload-alt"></i> الاشتراك في النسخ السحابي
+                            </button>
+                            <button id="activateCloudBtn" onclick="showActivateCloudModal()" class="btn-success" style="flex: 1; padding: 12px; display: none;">
+                                <i class="fas fa-key"></i> تفعيل الاشتراك السحابي
+                            </button>
+                            <button id="disconnectCloudBtn" onclick="disconnectCloud()" class="btn-danger" style="flex: 1; padding: 12px; display: none;">
+                                <i class="fas fa-unlink"></i> قطع الاتصال
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- بطاقة معرف الجهاز -->
+                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                            <i class="fas fa-desktop"></i> معلومات الجهاز
+                        </h3>
+                        <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; align-items: center;">
+                            <span style="font-weight: 600;">معرف الجهاز:</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <code id="machineIdDisplay" style="background: #e9ecef; padding: 8px 15px; border-radius: 5px; font-family: monospace;">---</code>
+                                <button onclick="copyMachineId()" class="btn-icon" title="نسخ">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 14px;">
+                            <i class="fas fa-info-circle"></i> استخدم هذا المعرف عند التواصل مع الدعم الفني
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- صفحة النسخ الاحتياطي -->
             <div class="page" id="backupPage">
                 <div class="page-header">
@@ -2473,7 +2604,7 @@
                 <p style="margin-bottom: 20px; color: var(--text-secondary);">
                     املأ البيانات التالية للاشتراك في خدمة النسخ الاحتياطي السحابي
                 </p>
-                <form onsubmit="submitSubscription(event)">
+                <form onsubmit="submitCloudSubscription(event)">
                     <div class="form-group">
                         <label>اسم المستخدم</label>
                         <input type="text" class="form-control" id="cloudUsername" required>
@@ -2491,27 +2622,145 @@
                         <input type="text" class="form-control" id="cloudAddress" required>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-arrow-right"></i>
-                        التالي
+                        <i class="fas fa-paper-plane"></i>
+                        إرسال طلب الاشتراك
                     </button>
                 </form>
             </div>
             <div id="subscriptionStep2" class="hidden">
-                <p style="margin-bottom: 20px; color: var(--text-secondary);">
-                    سيتم إنشاء كود اشتراك فريد لك. احتفظ به في مكان آمن.
-                </p>
-                <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px; color: var(--text-primary);">كود الاشتراك الخاص بك</h4>
-                    <p id="subscriptionCode" style="font-size: 24px; font-weight: 700; color: var(--primary-color); letter-spacing: 2px; font-family: monospace;"></p>
-                    <button class="btn btn-sm btn-info" onclick="copySubscriptionCode()">
-                        <i class="fas fa-copy"></i>
-                        نسخ الكود
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745; margin-bottom: 20px;"></i>
+                    <h3 style="color: #28a745;">تم إرسال طلب الاشتراك!</h3>
+                    <p style="margin: 20px 0; color: #666;">
+                        تم إرسال بياناتك إلى الشركة عبر WhatsApp.<br>
+                        بعد تأكيد الدفع، ستحصل على <strong>رمز التفعيل</strong> من الشركة.
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                        <p style="margin: 0; color: #333;">
+                            <i class="fas fa-info-circle"></i> قم بحفظ رمز التفعيل عندما تستلمه من الشركة
+                        </p>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="closeModal('cloudSubscriptionModal')">
+                        <i class="fas fa-check"></i>
+                        حسناً
                     </button>
                 </div>
-                <button class="btn btn-success btn-block" onclick="activateCloudSubscription()">
-                    <i class="fas fa-check"></i>
-                    تفعيل الاشتراك
-                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal تفعيل الاشتراك السحابي -->
+    <div id="activateCloudModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تفعيل الاشتراك السحابي</h3>
+                <span class="close" onclick="closeModal('activateCloudModal')">&times;</span>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin-bottom: 20px; color: #666;">
+                    أدخل رمز التفعيل الذي استلمته من الشركة لتفعيل خدمة النسخ السحابي
+                </p>
+                <form onsubmit="activateCloudWithCode(event)">
+                    <div class="form-group">
+                        <label>رمز التفعيل</label>
+                        <input type="text" class="form-control" id="cloudActivationCode" 
+                               placeholder="أدخل رمز التفعيل" 
+                               style="text-align: center; font-size: 18px; letter-spacing: 2px; font-family: monospace;"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-check-circle"></i>
+                        تفعيل الاشتراك
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal طلب التفعيل السنوي -->
+    <div id="yearlyActivationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>طلب تفعيل الاشتراك السنوي</h3>
+                <span class="close" onclick="closeModal('yearlyActivationModal')">&times;</span>
+            </div>
+            <div id="yearlyStep1">
+                <div style="padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-crown" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <h2 style="margin: 0 0 10px 0; color: white;">الاشتراك السنوي</h2>
+                        <p style="font-size: 32px; margin: 10px 0; font-weight: bold;">100 دولار</p>
+                        <p style="margin: 0; opacity: 0.9;">لمدة 365 يوم</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: #333;">المميزات:</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> استخدام كامل للتطبيق
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> نسخ احتياطي تلقائي
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> تحديثات مجانية
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> دعم فني مباشر
+                            </li>
+                            <li style="padding: 8px 0;">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> استخدام على أي جهاز
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="sendYearlyActivationRequest()" class="btn btn-primary btn-block" style="padding: 15px; font-size: 16px;">
+                        <i class="fas fa-paper-plane"></i>
+                        إرسال طلب التفعيل للشركة
+                    </button>
+                </div>
+            </div>
+            <div id="yearlyStep2" class="hidden">
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 60px; color: #28a745; margin-bottom: 20px;"></i>
+                    <h3 style="color: #28a745;">تم إرسال طلب التفعيل!</h3>
+                    <p style="margin: 20px 0; color: #666;">
+                        تم إرسال طلبك إلى الشركة عبر WhatsApp.<br>
+                        بعد تأكيد الدفع (100 دولار)، ستحصل على <strong>رمز التفعيل</strong> من الشركة.
+                    </p>
+                    <button class="btn btn-primary" onclick="closeModal('yearlyActivationModal'); showActivateYearlyModal();">
+                        <i class="fas fa-key"></i>
+                        لدي رمز التفعيل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal تفعيل السنوي -->
+    <div id="activateYearlyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تفعيل الاشتراك السنوي</h3>
+                <span class="close" onclick="closeModal('activateYearlyModal')">&times;</span>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin-bottom: 20px; color: #666;">
+                    أدخل رمز التفعيل الذي استلمته من الشركة لتفعيل اشتراكك السنوي
+                </p>
+                <form onsubmit="activateYearlyWithCode(event)">
+                    <div class="form-group">
+                        <label>رمز التفعيل السنوي</label>
+                        <input type="text" class="form-control" id="yearlyActivationCode" 
+                               placeholder="أدخل رمز التفعيل" 
+                               style="text-align: center; font-size: 18px; letter-spacing: 2px; font-family: monospace;"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-check-circle"></i>
+                        تفعيل الاشتراك
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -5140,33 +5389,162 @@
             document.getElementById('cloudSubscriptionModal').style.display = 'block';
         }
 
-        function submitSubscription(event) {
+        // [تم استبدال دالة submitSubscription بدالة submitCloudSubscription الجديدة]
+
+        // إرسال طلب الاشتراك عبر WhatsApp
+        function sendSubscriptionRequestToWhatsApp(config) {
+            const message = `
+🔔 *طلب اشتراك جديد - النسخ السحابي*
+━━━━━━━━━━━━━━━━━━
+🏪 *اسم المطعم:* ${config.restaurantName}
+👤 *اسم المستخدم:* ${config.username}
+📱 *رقم الهاتف:* ${config.phone}
+📍 *العنوان:* ${config.address}
+🆔 *معرف المستخدم:* ${config.userId}
+🔑 *كود الاشتراك:* ${config.subscriptionCode}
+📅 *تاريخ الطلب:* ${formatDate(config.createdAt)}
+━━━━━━━━━━━━━━━━━━
+⚠️ *يرجى إنشاء كود تفعيل وإرساله للعميل*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // عرض نافذة إدخال كود التفعيل
+        function showActivationCodeInput() {
+            const html = `
+                <div style="padding: 20px;">
+                    <h3 style="text-align: center; color: var(--primary-color); margin-bottom: 20px;">
+                        <i class="fas fa-key"></i> إدخال كود التفعيل
+                    </h3>
+                    
+                    <form onsubmit="activateCloudSubscriptionWithCode(event)">
+                        <div class="form-group">
+                            <label>كود التفعيل المستلم من الشركة</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="cloudActivationCodeInput" 
+                                   placeholder="أدخل كود التفعيل" 
+                                   required
+                                   style="text-align: center; font-size: 18px; letter-spacing: 2px; text-transform: uppercase; font-family: monospace;">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 8px;">
+                                أدخل الكود الذي تم إرساله لك من قبل شركة الإبداع الرقمي
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-check-circle"></i>
+                            تفعيل الاشتراك
+                        </button>
+
+                        <button type="button" onclick="closeModal('cloudSubscriptionModal')" class="btn btn-secondary btn-block" style="margin-top: 10px;">
+                            <i class="fas fa-times"></i>
+                            إلغاء
+                        </button>
+                    </form>
+                </div>
+            `;
+
+            document.getElementById('subscriptionStep2').innerHTML = html;
+        }
+
+        // التواصل مع الشركة للحصول على كود التفعيل
+        function contactCompanyForCloudActivation() {
+            const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+            if (!cloudConfig) return;
+
+            const message = `
+🔑 *طلب كود تفعيل - النسخ السحابي*
+━━━━━━━━━━━━━━━━━━
+🏪 *اسم المطعم:* ${cloudConfig.restaurantName}
+👤 *اسم المستخدم:* ${cloudConfig.username}
+📱 *رقم الهاتف:* ${cloudConfig.phone}
+🆔 *معرف المستخدم:* ${cloudConfig.userId}
+🔑 *كود الاشتراك:* ${cloudConfig.subscriptionCode}
+━━━━━━━━━━━━━━━━━━
+⚠️ *أرغب في الحصول على كود التفعيل*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            return false;
+        }
+
+        // تفعيل الاشتراك السحابي بكود التفعيل
+        function activateCloudSubscriptionWithCode(event) {
             event.preventDefault();
-            
-            const username = document.getElementById('cloudUsername').value;
-            const phone = document.getElementById('cloudPhone').value;
-            const restaurantName = document.getElementById('cloudRestaurantName').value;
-            const address = document.getElementById('cloudAddress').value;
 
-            // إنشاء كود اشتراك فريد
-            const subscriptionCode = generateSubscriptionCode();
-            currentUserId = 'user_' + Date.now();
+            const activationCode = document.getElementById('cloudActivationCodeInput').value.trim().toUpperCase();
+            const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
 
-            const cloudConfig = {
-                username,
-                phone,
-                restaurantName,
-                address,
-                subscriptionCode,
-                userId: currentUserId,
-                createdAt: new Date().toISOString(),
-                active: false
-            };
+            if (!cloudConfig) {
+                showNotification('لم يتم العثور على بيانات الاشتراك', 'error');
+                return;
+            }
 
-            LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
-            document.getElementById('subscriptionCode').textContent = subscriptionCode;
-            document.getElementById('subscriptionStep1').classList.add('hidden');
-            document.getElementById('subscriptionStep2').classList.remove('hidden');
+            if (!activationCode) {
+                showNotification('يرجى إدخال كود التفعيل', 'error');
+                return;
+            }
+
+            // التحقق من كود التفعيل في Firebase
+            if (firebaseDB) {
+                const activationRef = firebaseDB.ref('cloud_activations/' + cloudConfig.userId);
+                
+                activationRef.once('value').then(snapshot => {
+                    const activationData = snapshot.val();
+                    
+                    if (activationData && activationData.code === activationCode && activationData.valid) {
+                        // كود صحيح - تفعيل الاشتراك
+                        cloudConfig.active = true;
+                        cloudConfig.pending = false;
+                        cloudConfig.activationCode = activationCode;
+                        cloudConfig.activationDate = new Date().toISOString();
+                        cloudConfig.subscriptionEndDate = new Date(Date.now() + YEARLY_SUBSCRIPTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+                        
+                        LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
+                        
+                        // تحديث حالة التفعيل في Firebase
+                        activationRef.update({ 
+                            used: true, 
+                            usedAt: new Date().toISOString(),
+                            activatedBy: cloudConfig.username
+                        });
+
+                        // رفع البيانات الأولية
+                        syncToCloud(true);
+                        
+                        closeModal('cloudSubscriptionModal');
+                        updateCloudStatus();
+                        
+                        showNotification('تم تفعيل النسخ السحابي بنجاح! 🎉', 'success');
+                    } else {
+                        showNotification('كود التفعيل غير صحيح أو منتهي الصلاحية', 'error');
+                    }
+                }).catch(err => {
+                    console.error('Activation check error:', err);
+                    showNotification('خطأ في التحقق من كود التفعيل. تأكد من الاتصال بالإنترنت.', 'error');
+                });
+            } else {
+                showNotification('لا يمكن التحقق من كود التفعيل بدون اتصال بالإنترنت', 'error');
+            }
+        }
+
+        // نسخ النص
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('تم نسخ الكود بنجاح', 'success');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('تم نسخ الكود', 'success');
+            });
         }
 
         function generateSubscriptionCode() {
@@ -5383,6 +5761,491 @@
             }
         };
 
+        // ==================== قسم "حسابي" ====================
+        
+        // عرض صفحة حسابي
+        function showMyAccount() {
+            showPage('myAccountPage');
+            loadAccountInfo();
+        }
+
+        // تحميل معلومات الحساب
+        function loadAccountInfo() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+
+            if (!registration) return;
+
+            // ملء معلومات المطعم
+            document.getElementById('accountRestaurantName').textContent = registration.restaurantName;
+            document.getElementById('accountOwnerName').textContent = 'المالك: ' + registration.ownerName;
+            document.getElementById('accountPhone').textContent = '📱 ' + registration.phone;
+            document.getElementById('accountAddress').textContent = '📍 ' + registration.address;
+
+            // ملء حالة الاشتراك
+            const now = new Date();
+            const trialEnd = new Date(registration.trialEndDate);
+            const daysLeft = Math.ceil((trialEnd - now) / (24 * 60 * 60 * 1000));
+
+            document.getElementById('registrationDate').textContent = formatDate(registration.registrationDate);
+            document.getElementById('trialEndDate').textContent = formatDate(registration.trialEndDate);
+            
+            // تحديث حالة التطبيق
+            const statusEl = document.getElementById('appStatus');
+            const daysEl = document.getElementById('daysRemaining');
+            
+            if (registration.status === 'active') {
+                statusEl.textContent = 'نشط (مفعّل)';
+                statusEl.style.background = '#28a745';
+                
+                if (registration.subscriptionEndDate) {
+                    const subEnd = new Date(registration.subscriptionEndDate);
+                    const daysLeftSub = Math.ceil((subEnd - now) / (24 * 60 * 60 * 1000));
+                    document.getElementById('subscriptionEndDate').textContent = formatDate(registration.subscriptionEndDate);
+                    document.getElementById('subscriptionEndRow').style.display = 'flex';
+                    daysEl.textContent = daysLeftSub + ' يوم';
+                    daysEl.style.color = daysLeftSub < 30 ? '#dc3545' : '#28a745';
+                }
+                
+                // إخفاء زر التفعيل
+                document.getElementById('yearlyActivationSection').style.display = 'none';
+            } else if (registration.status === 'trial') {
+                statusEl.textContent = 'فترة تجريبية';
+                statusEl.style.background = '#ffc107';
+                daysEl.textContent = daysLeft > 0 ? daysLeft + ' يوم' : 'انتهت';
+                daysEl.style.color = daysLeft < 3 ? '#dc3545' : '#ffc107';
+                
+                // إظهار زر التفعيل إذا اقترب انتهاء الفترة أو انتهت
+                if (daysLeft <= 3) {
+                    document.getElementById('yearlyActivationSection').style.display = 'block';
+                }
+            } else {
+                statusEl.textContent = 'منتهي';
+                statusEl.style.background = '#dc3545';
+                daysEl.textContent = '0 يوم';
+                daysEl.style.color = '#dc3545';
+                
+                // إظهار زر التفعيل
+                document.getElementById('yearlyActivationSection').style.display = 'block';
+            }
+
+            // ملء معلومات النسخ السحابي
+            const cloudStatusEl = document.getElementById('cloudBackupStatus');
+            if (cloudConfig && cloudConfig.active) {
+                cloudStatusEl.innerHTML = `
+                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #d4edda; border-radius: 10px; margin-bottom: 10px; border: 2px solid #28a745;">
+                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
+                        <span style="color: #28a745; font-weight: bold;">
+                            <i class="fas fa-check-circle"></i> مفعّل
+                        </span>
+                    </div>
+                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
+                        <span style="font-weight: 600;">اسم المستخدم:</span>
+                        <span>${cloudConfig.username}</span>
+                    </div>
+                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
+                        <span style="font-weight: 600;">آخر مزامنة:</span>
+                        <span>${cloudConfig.lastSync ? formatDate(cloudConfig.lastSync) : 'لم تتم بعد'}</span>
+                    </div>
+                `;
+                
+                // إخفاء زر الاشتراك، إظهار زر قطع الاتصال
+                document.getElementById('subscribeCloudBtn').style.display = 'none';
+                document.getElementById('activateCloudBtn').style.display = 'none';
+                document.getElementById('disconnectCloudBtn').style.display = 'block';
+            } else if (cloudConfig && cloudConfig.pending) {
+                cloudStatusEl.innerHTML = `
+                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #fff3cd; border-radius: 10px; margin-bottom: 10px; border: 2px solid #ffc107;">
+                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
+                        <span style="color: #856404; font-weight: bold;">
+                            <i class="fas fa-hourglass-half"></i> في انتظار التفعيل
+                        </span>
+                    </div>
+                    <p style="margin: 15px 0; color: #666; font-size: 14px;">
+                        <i class="fas fa-info-circle"></i> تم إرسال طلب الاشتراك. استخدم رمز التفعيل من الشركة لإكمال التفعيل.
+                    </p>
+                `;
+                
+                // إخفاء زر الاشتراك، إظهار زر التفعيل
+                document.getElementById('subscribeCloudBtn').style.display = 'none';
+                document.getElementById('activateCloudBtn').style.display = 'block';
+                document.getElementById('disconnectCloudBtn').style.display = 'none';
+            } else {
+                cloudStatusEl.innerHTML = `
+                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8d7da; border-radius: 10px; margin-bottom: 10px; border: 2px solid #dc3545;">
+                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
+                        <span style="color: #721c24; font-weight: bold;">
+                            <i class="fas fa-times-circle"></i> غير مفعّل
+                        </span>
+                    </div>
+                    <p style="margin: 15px 0; color: #666; font-size: 14px;">
+                        <i class="fas fa-info-circle"></i> اشترك في النسخ السحابي لحماية بياناتك والوصول إليها من أي مكان.
+                    </p>
+                `;
+                
+                // إظهار زر الاشتراك فقط
+                document.getElementById('subscribeCloudBtn').style.display = 'block';
+                document.getElementById('activateCloudBtn').style.display = 'none';
+                document.getElementById('disconnectCloudBtn').style.display = 'none';
+            }
+
+            // عرض معرف الجهاز
+            document.getElementById('machineIdDisplay').textContent = generateMachineId();
+        }
+
+        // نسخ معرف الجهاز
+        function copyMachineId() {
+            const machineId = generateMachineId();
+            navigator.clipboard.writeText(machineId).then(() => {
+                showNotification('تم نسخ معرف الجهاز', 'success');
+            });
+        }
+
+        // ==================== نظام الاشتراك السحابي المحسّن ====================
+        
+        // فتح modal الاشتراك السحابي
+        function showCloudSubscriptionModal() {
+            // ملء البيانات من التسجيل الأولي
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            if (registration) {
+                document.getElementById('cloudUsername').value = registration.ownerName;
+                document.getElementById('cloudPhone').value = registration.phone;
+                document.getElementById('cloudRestaurantName').value = registration.restaurantName;
+                document.getElementById('cloudAddress').value = registration.address;
+            }
+            
+            // إعادة تعيين الشاشات
+            document.getElementById('subscriptionStep1').classList.remove('hidden');
+            document.getElementById('subscriptionStep2').classList.add('hidden');
+            
+            openModal('cloudSubscriptionModal');
+        }
+
+        // إرسال طلب الاشتراك السحابي
+        function submitCloudSubscription(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('cloudUsername').value;
+            const phone = document.getElementById('cloudPhone').value;
+            const restaurantName = document.getElementById('cloudRestaurantName').value;
+            const address = document.getElementById('cloudAddress').value;
+
+            // إنشاء كود اشتراك فريد (مخفي عن المستخدم)
+            const subscriptionCode = generateSubscriptionCode();
+            const machineId = generateMachineId();
+            currentUserId = 'user_' + Date.now();
+
+            const cloudConfig = {
+                username,
+                phone,
+                restaurantName,
+                address,
+                subscriptionCode, // مخفي
+                userId: currentUserId,
+                machineId: machineId,
+                createdAt: new Date().toISOString(),
+                active: false,
+                pending: true,
+                subscriptionRequested: true
+            };
+
+            // حفظ البيانات محلياً
+            LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
+
+            // رفع طلب الاشتراك إلى Firebase (مع الكود المخفي)
+            if (firebaseDB) {
+                const subscriptionRequestRef = firebaseDB.ref('cloud_subscriptions/' + machineId);
+                subscriptionRequestRef.set({
+                    username,
+                    phone,
+                    restaurantName,
+                    address,
+                    subscriptionCode, // الكود موجود في Firebase للتحقق
+                    userId: currentUserId,
+                    machineId: machineId,
+                    requestDate: new Date().toISOString(),
+                    status: 'pending',
+                    activated: false,
+                    activationCode: null // سيتم ملؤه من قبل الشركة
+                }).catch(err => console.error('Firebase save error:', err));
+            }
+
+            // إرسال طلب الاشتراك عبر WhatsApp (بدون الكود)
+            sendCloudSubscriptionToWhatsApp(cloudConfig);
+
+            // عرض رسالة النجاح
+            document.getElementById('subscriptionStep1').classList.add('hidden');
+            document.getElementById('subscriptionStep2').classList.remove('hidden');
+
+            // تحديث واجهة حسابي
+            loadAccountInfo();
+        }
+
+        // إرسال طلب الاشتراك السحابي عبر WhatsApp
+        function sendCloudSubscriptionToWhatsApp(config) {
+            const message = `
+🔔 *طلب اشتراك جديد - النسخ السحابي*
+━━━━━━━━━━━━━━━━━━
+🏪 *اسم المطعم:* ${config.restaurantName}
+👤 *اسم المستخدم:* ${config.username}
+📱 *رقم الهاتف:* ${config.phone}
+📍 *العنوان:* ${config.address}
+🖥️ *معرف الجهاز:* ${config.machineId}
+🆔 *معرف المستخدم:* ${config.userId}
+📅 *تاريخ الطلب:* ${formatDate(config.createdAt)}
+━━━━━━━━━━━━━━━━━━
+⚠️ *يرجى إنشاء رمز تفعيل وإضافته في Firebase*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // فتح modal تفعيل الاشتراك السحابي
+        function showActivateCloudModal() {
+            document.getElementById('cloudActivationCode').value = '';
+            openModal('activateCloudModal');
+        }
+
+        // تفعيل الاشتراك السحابي بالكود
+        function activateCloudWithCode(event) {
+            event.preventDefault();
+            
+            const code = document.getElementById('cloudActivationCode').value.trim().toUpperCase();
+            const machineId = generateMachineId();
+            const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+
+            if (!cloudConfig) {
+                showNotification('لم يتم العثور على طلب اشتراك', 'error');
+                return;
+            }
+
+            // التحقق من الكود في Firebase
+            if (firebaseDB) {
+                const subscriptionRef = firebaseDB.ref('cloud_subscriptions/' + machineId);
+                subscriptionRef.once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    
+                    if (data && data.activationCode === code) {
+                        // كود صحيح - تفعيل الاشتراك
+                        cloudConfig.active = true;
+                        cloudConfig.pending = false;
+                        cloudConfig.activationCode = code;
+                        cloudConfig.activatedAt = new Date().toISOString();
+                        
+                        LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
+                        currentUserId = cloudConfig.userId;
+                        
+                        // تحديث حالة التفعيل في Firebase
+                        subscriptionRef.update({ 
+                            activated: true, 
+                            activatedAt: new Date().toISOString(),
+                            status: 'active'
+                        });
+                        
+                        closeModal('activateCloudModal');
+                        showNotification('تم تفعيل النسخ السحابي بنجاح! 🎉', 'success');
+                        
+                        // رفع البيانات للسحابة لأول مرة
+                        syncToCloud(true);
+                        
+                        // تحديث واجهة حسابي
+                        loadAccountInfo();
+                    } else {
+                        showNotification('رمز التفعيل غير صحيح', 'error');
+                    }
+                }).catch(err => {
+                    console.error('Activation check error:', err);
+                    showNotification('خطأ في التحقق من رمز التفعيل', 'error');
+                });
+            } else {
+                showNotification('لا يمكن التحقق من رمز التفعيل بدون اتصال بالإنترنت', 'error');
+            }
+        }
+
+        // قطع الاتصال من النسخ السحابي
+        function disconnectCloud() {
+            if (confirm('هل أنت متأكد من قطع الاتصال بالنسخ السحابي؟\n\nيمكنك إعادة الاتصال لاحقاً باستخدام رمز التفعيل.')) {
+                const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+                if (cloudConfig) {
+                    cloudConfig.active = false;
+                    LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
+                    currentUserId = null;
+                    
+                    showNotification('تم قطع الاتصال من النسخ السحابي', 'info');
+                    loadAccountInfo();
+                    updateCloudStatus();
+                }
+            }
+        }
+
+        // ==================== نظام التفعيل السنوي المحسّن ====================
+        
+        // طلب تفعيل الاشتراك السنوي
+        function requestYearlyActivation() {
+            document.getElementById('yearlyStep1').classList.remove('hidden');
+            document.getElementById('yearlyStep2').classList.add('hidden');
+            openModal('yearlyActivationModal');
+        }
+
+        // إرسال طلب التفعيل السنوي
+        function sendYearlyActivationRequest() {
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            const machineId = generateMachineId();
+            
+            // توليد كود فريد للتفعيل (مخفي)
+            const activationRequestCode = 'YAR-' + Date.now().toString(36).toUpperCase();
+            
+            // حفظ طلب التفعيل
+            const activationRequest = {
+                machineId: machineId,
+                requestCode: activationRequestCode,
+                restaurantName: registration.restaurantName,
+                ownerName: registration.ownerName,
+                phone: registration.phone,
+                requestDate: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            // رفع الطلب إلى Firebase
+            if (firebaseDB) {
+                const requestRef = firebaseDB.ref('yearly_activation_requests/' + machineId);
+                requestRef.set(activationRequest).catch(err => console.error('Firebase error:', err));
+            }
+
+            // إرسال WhatsApp
+            const message = `
+💎 *طلب تفعيل الاشتراك السنوي*
+━━━━━━━━━━━━━━━━━━
+🏪 *المطعم:* ${registration.restaurantName}
+👤 *المالك:* ${registration.ownerName}
+📱 *الهاتف:* ${registration.phone}
+🖥️ *معرف الجهاز:* ${machineId}
+💰 *المبلغ:* 100 دولار
+📅 *تاريخ الطلب:* ${formatDate(activationRequest.requestDate)}
+━━━━━━━━━━━━━━━━━━
+⚠️ *يرجى إنشاء رمز تفعيل سنوي وإضافته في Firebase*
+            `.trim();
+
+            const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // عرض الخطوة الثانية
+            document.getElementById('yearlyStep1').classList.add('hidden');
+            document.getElementById('yearlyStep2').classList.remove('hidden');
+        }
+
+        // فتح modal إدخال رمز التفعيل السنوي
+        function showActivateYearlyModal() {
+            document.getElementById('yearlyActivationCode').value = '';
+            openModal('activateYearlyModal');
+        }
+
+        // تفعيل الاشتراك السنوي بالكود
+        function activateYearlyWithCode(event) {
+            event.preventDefault();
+            
+            const code = document.getElementById('yearlyActivationCode').value.trim().toUpperCase();
+            const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
+            const machineId = generateMachineId();
+
+            if (!registration) {
+                showNotification('خطأ في بيانات التسجيل', 'error');
+                return;
+            }
+
+            // التحقق من الكود في Firebase
+            if (firebaseDB) {
+                const activationRef = firebaseDB.ref('yearly_activations/' + machineId);
+                activationRef.once('value').then(snapshot => {
+                    const data = snapshot.val();
+                    
+                    if (data && data.code === code && data.valid) {
+                        // كود صحيح - تفعيل الاشتراك
+                        registration.status = 'active';
+                        registration.activationCode = code;
+                        registration.activationDate = new Date().toISOString();
+                        registration.subscriptionEndDate = new Date(Date.now() + YEARLY_SUBSCRIPTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+                        
+                        LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                        
+                        // تحديث حالة التفعيل في Firebase
+                        activationRef.update({ 
+                            used: true, 
+                            usedAt: new Date().toISOString(),
+                            machineId: machineId
+                        });
+                        
+                        closeModal('activateYearlyModal');
+                        showNotification('تم تفعيل الاشتراك السنوي بنجاح! 🎉\nيمكنك الآن استخدام التطبيق بدون قيود لمدة سنة كاملة', 'success');
+                        
+                        // تحديث واجهة حسابي
+                        loadAccountInfo();
+                    } else {
+                        showNotification('رمز التفعيل غير صحيح', 'error');
+                    }
+                }).catch(err => {
+                    console.error('Activation check error:', err);
+                    showNotification('خطأ في التحقق من رمز التفعيل', 'error');
+                });
+            } else {
+                showNotification('لا يمكن التحقق من رمز التفعيل بدون اتصال بالإنترنت', 'error');
+            }
+        }
+
+        // استخدام الكود على جهاز آخر (بشكل فردي)
+        function useActivationCodeOnAnotherDevice() {
+            const code = prompt('أدخل رمز التفعيل السنوي الخاص بك:');
+            
+            if (!code) return;
+            
+            const cleanCode = code.trim().toUpperCase();
+            const newMachineId = generateMachineId();
+            
+            if (firebaseDB) {
+                // البحث عن التفعيل بالكود
+                const activationsRef = firebaseDB.ref('yearly_activations');
+                activationsRef.orderByChild('code').equalTo(cleanCode).once('value')
+                    .then(snapshot => {
+                        if (snapshot.exists()) {
+                            const activationData = Object.values(snapshot.val())[0];
+                            
+                            if (activationData.valid && activationData.used) {
+                                // الكود مستخدم - السماح باستخدامه على جهاز جديد (بشكل فردي)
+                                const oldMachineId = activationData.machineId;
+                                
+                                // تحديث معرف الجهاز
+                                const activationKey = Object.keys(snapshot.val())[0];
+                                firebaseDB.ref('yearly_activations/' + activationKey).update({
+                                    machineId: newMachineId,
+                                    lastUsedAt: new Date().toISOString(),
+                                    deviceSwitched: true,
+                                    previousMachineId: oldMachineId
+                                });
+                                
+                                // تحديث البيانات المحلية
+                                const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION) || {};
+                                registration.status = 'active';
+                                registration.activationCode = cleanCode;
+                                registration.subscriptionEndDate = activationData.expiryDate;
+                                LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                                
+                                showNotification('تم التفعيل بنجاح على هذا الجهاز', 'success');
+                                loadAccountInfo();
+                            } else {
+                                showNotification('رمز التفعيل غير صالح أو لم يتم استخدامه بعد', 'error');
+                            }
+                        } else {
+                            showNotification('رمز التفعيل غير موجود', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Device switch error:', err);
+                        showNotification('خطأ في التبديل بين الأجهزة', 'error');
+                    });
+            }
+        }
+
         // التهيئة عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             loadTheme();
@@ -5406,6 +6269,142 @@
                 checkUserPermissions();
                 updateCloudStatus();
             }
+
+            // تسجيل Service Worker للـ PWA
+            registerServiceWorker();
+            setupPWAInstall();
+        });
+
+        // ==================== PWA Service Worker ====================
+        
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                        
+                        // التحقق من التحديثات
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // يوجد تحديث جديد
+                                    if (confirm('يوجد تحديث جديد للتطبيق. هل تريد تحديثه الآن؟')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+
+                // إعادة تحميل الصفحة عند التحكم بواسطة Service Worker جديد
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    window.location.reload();
+                });
+            }
+        }
+
+        // ==================== PWA Installation ====================
+        
+        let deferredPrompt;
+        let installButton;
+
+        function setupPWAInstall() {
+            // إنشاء زر التثبيت
+            installButton = document.createElement('button');
+            installButton.id = 'installButton';
+            installButton.className = 'pwa-install-btn hidden';
+            installButton.innerHTML = `
+                <i class="fas fa-download"></i>
+                <span>تثبيت التطبيق</span>
+            `;
+            installButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--primary-color) 0%, #667eea 100%);
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 50px;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+                z-index: 1000;
+                transition: all 0.3s ease;
+            `;
+            document.body.appendChild(installButton);
+
+            installButton.addEventListener('mouseenter', () => {
+                installButton.style.transform = 'translateY(-2px)';
+                installButton.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.6)';
+            });
+
+            installButton.addEventListener('mouseleave', () => {
+                installButton.style.transform = 'translateY(0)';
+                installButton.style.boxShadow = '0 4px 15px rgba(124, 58, 237, 0.4)';
+            });
+
+            // الاستماع لحدث beforeinstallprompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // إظهار زر التثبيت
+                installButton.classList.remove('hidden');
+            });
+
+            // معالجة نقرة زر التثبيت
+            installButton.addEventListener('click', async () => {
+                if (!deferredPrompt) {
+                    return;
+                }
+
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                    showNotification('جاري تثبيت التطبيق...', 'success');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+
+                deferredPrompt = null;
+                installButton.classList.add('hidden');
+            });
+
+            // إخفاء زر التثبيت بعد التثبيت
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA was installed');
+                installButton.classList.add('hidden');
+                showNotification('تم تثبيت التطبيق بنجاح! 🎉', 'success');
+            });
+
+            // التحقق إذا كان التطبيق مثبت بالفعل
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('App is running in standalone mode');
+                installButton.classList.add('hidden');
+            }
+        }
+
+        // التحقق من حالة الشبكة
+        window.addEventListener('online', () => {
+            showNotification('تم الاتصال بالإنترنت', 'success');
+            autoSyncToCloud();
+        });
+
+        window.addEventListener('offline', () => {
+            showNotification('لا يوجد اتصال بالإنترنت. التطبيق يعمل بوضع عدم الاتصال.', 'warning');
         });
     </script>
 </body>
