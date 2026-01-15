@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+            <style>
+                .action-btn {
+                    min-width: 36px;
+                    min-height: 36px;
+                    max-width: 40px;
+                    max-height: 40px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0 8px;
+                    font-size: 18px;
+                    border-radius: 8px;
+                    box-sizing: border-box;
+                    margin: 0;
+                }
+                td > .action-btn {
+                    width: auto;
+                    flex: none;
+                }
+                .action-btn i {
+                    margin: 0;
+                }
+            </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة المطعم - Restaurant Management System</title>
@@ -1181,6 +1204,364 @@
             margin-top: 20px;
         }
 
+        /* ==================== تصميم صفحة الحساب المحسّن ==================== */
+        .account-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .info-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .info-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-card h3 i {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .restaurant-header-card {
+            background: var(--gradient-primary);
+            color: white !important;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .restaurant-header-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.8); }
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .restaurant-icon {
+            font-size: 70px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .restaurant-details h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: white !important;
+        }
+
+        .restaurant-details p {
+            font-size: 15px;
+            opacity: 0.95;
+            margin: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .status-row:hover {
+            background: var(--bg-primary);
+            transform: translateX(-5px);
+        }
+
+        .status-row span:first-child {
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-row span:first-child i {
+            color: var(--primary-color);
+        }
+
+        .status-row span:last-child {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-badge.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .status-badge.trial {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .status-badge.expired {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .days-remaining {
+            font-size: 20px;
+            font-weight: 800;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cloud-status-indicator {
+            padding: 18px 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border: 2px solid;
+        }
+
+        .cloud-status-indicator.active {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .cloud-status-indicator.pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .cloud-status-indicator.inactive {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .cloud-status-indicator i {
+            font-size: 24px;
+        }
+
+        .action-buttons-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn-primary, .btn-success, .btn-danger {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 24px;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #5f27cd 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .machine-id-display {
+            background: var(--bg-tertiary);
+            padding: 18px 24px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px dashed var(--border-color);
+        }
+
+        .machine-id-code {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .info-message {
+            padding: 15px 20px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border-right: 4px solid var(--primary-color);
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .info-message i {
+            color: var(--primary-color);
+            margin-left: 5px;
+        }
+
+        .yearly-activation-button {
+            width: 100%;
+            padding: 18px;
+            font-size: 17px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .yearly-activation-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+        }
+
+        .yearly-activation-button i {
+            margin-left: 10px;
+        }
+
+        /* تصميم الثيم الداكن */
+        .dark-theme .info-card {
+            background: var(--bg-secondary);
+            border-color: #3a3a3a;
+        }
+
+        .dark-theme .restaurant-header-card {
+            background: var(--gradient-gold);
+        }
+
+        .dark-theme .status-row {
+            background: var(--bg-tertiary);
+        }
+
+        .dark-theme .machine-id-display {
+            background: var(--bg-tertiary);
+            border-color: #3a3a3a;
+        }
+
+        .dark-theme .machine-id-code {
+            color: var(--primary-color);
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -1223,6 +1604,19 @@
     </style>
 </head>
 <body class="light-theme">
+    <!-- نافذة تأكيد النسخ السحابي عند الإغلاق -->
+    <div id="cloudBackupPrompt" class="modal" style="display:none;align-items:center;justify-content:center;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h3 style="font-size: 20px; color: #333;">تنبيه قبل الإغلاق</h3>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin-bottom: 20px; color: #666;">هل ترغب في رفع نسخة احتياطية من بياناتك إلى السحابة قبل إغلاق التطبيق؟</p>
+                <button class="btn btn-success" id="cloudBackupConfirmBtn" style="width: 100%; margin-bottom: 10px;">نعم، رفع نسخة احتياطية</button>
+                <button class="btn btn-secondary" id="cloudBackupCancelBtn" style="width: 100%;">إغلاق بدون رفع</button>
+            </div>
+        </div>
+    </div>
     
     <!-- شاشة التسجيل الأولي -->
     <div id="registrationScreen" class="registration-screen hidden">
@@ -1305,16 +1699,6 @@
         </div>
     </div>
 
-    <!-- أزرار تسجيل الخروج والتحديث -->
-    <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        تسجيل الخروج
-    </button>
-
-    <button class="refresh-btn hidden" id="refreshBtn" onclick="refreshApp()">
-        <i class="fas fa-sync-alt"></i>
-        تحديث
-    </button>
     
     <div class="custom-titlebar">
         <div class="titlebar-drag-region">
@@ -1336,8 +1720,14 @@
             </div>
             
             <div class="titlebar-right">
-                <button class="theme-toggle" onclick="toggleTheme()">
+                <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الثيم">
                     <i class="fas fa-moon"></i>
+                </button>
+                <button class="titlebar-button" onclick="refreshPage()" title="تحديث الصفحة">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="titlebar-button" onclick="logout()" title="تسجيل الخروج" style="color: #ff6b6b;">
+                    <i class="fas fa-sign-out-alt"></i>
                 </button>
                 <button class="titlebar-button" onclick="minimizeWindow()">
                     <i class="fas fa-window-minimize"></i>
@@ -1606,7 +1996,7 @@
                         <i class="fas fa-boxes"></i>
                         إدارة المنتجات
                     </h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="showAddProductModal()">
                             <i class="fas fa-plus"></i>
                             إضافة منتج
@@ -1622,6 +2012,10 @@
                         <button class="btn btn-warning" onclick="exportToPDF('products')">
                             <i class="fas fa-file-pdf"></i>
                             PDF
+                        </button>
+                        <button class="btn btn-dark" onclick="exportSectionAsJSON('products', LocalDB.KEYS.PRODUCTS)" style="background: #343a40;">
+                            <i class="fas fa-file-code"></i>
+                            JSON
                         </button>
                         <button class="btn btn-secondary" onclick="showPage('homePage')">
                             <i class="fas fa-arrow-right"></i>
@@ -1726,7 +2120,7 @@
                         <i class="fas fa-file-invoice-dollar"></i>
                         الفواتير
                     </h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="exportToExcel('invoices')">
                             <i class="fas fa-file-excel"></i>
                             Excel
@@ -1734,6 +2128,10 @@
                         <button class="btn btn-warning" onclick="exportToPDF('invoices')">
                             <i class="fas fa-file-pdf"></i>
                             PDF
+                        </button>
+                        <button class="btn btn-dark" onclick="exportSectionAsJSON('invoices', LocalDB.KEYS.INVOICES)" style="background: #343a40;">
+                            <i class="fas fa-file-code"></i>
+                            JSON
                         </button>
                         <button class="btn btn-secondary" onclick="showPage('homePage')">
                             <i class="fas fa-arrow-right"></i>
@@ -1816,7 +2214,7 @@
                         <i class="fas fa-receipt"></i>
                         إدارة المصاريف
                     </h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="showAddExpenseModal()">
                             <i class="fas fa-plus"></i>
                             إضافة مصروف
@@ -1828,6 +2226,10 @@
                         <button class="btn btn-warning" onclick="exportToPDF('expenses')">
                             <i class="fas fa-file-pdf"></i>
                             PDF
+                        </button>
+                        <button class="btn btn-dark" onclick="exportSectionAsJSON('expenses', LocalDB.KEYS.EXPENSES)" style="background: #343a40;">
+                            <i class="fas fa-file-code"></i>
+                            JSON
                         </button>
                         <button class="btn btn-secondary" onclick="showPage('homePage')">
                             <i class="fas fa-arrow-right"></i>
@@ -1992,104 +2394,143 @@
             </div>
 
             <!-- صفحة حسابي -->
-            <div id="myAccountPage" class="page-content" style="display: none;">
+            <div id="myAccountPage" class="page">
                 <div class="page-header">
-                    <button onclick="showPage('homePage')" class="btn-back">
-                        <i class="fas fa-arrow-right"></i> رجوع
+                    <h2>
+                        <i class="fas fa-user-circle" style="color: var(--primary-color);"></i>
+                        حسابي
+                    </h2>
+                    <button class="btn btn-secondary" onclick="showPage('homePage')">
+                        <i class="fas fa-arrow-right"></i>
+                        عودة
                     </button>
-                    <h2><i class="fas fa-user-circle"></i> حسابي</h2>
                 </div>
 
-                <div class="account-container" style="max-width: 900px; margin: 0 auto;">
+                <div class="account-container">
                     <!-- بطاقة معلومات المطعم -->
-                    <div class="info-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <div style="font-size: 60px;">🏪</div>
-                            <div style="flex: 1;">
-                                <h2 id="accountRestaurantName" style="margin: 0 0 10px 0; color: white;">اسم المطعم</h2>
-                                <p id="accountOwnerName" style="margin: 5px 0; opacity: 0.9;">المالك: ---</p>
-                                <p id="accountPhone" style="margin: 5px 0; opacity: 0.9;">📱 ---</p>
-                                <p id="accountAddress" style="margin: 5px 0; opacity: 0.9;">📍 ---</p>
+                    <div class="info-card restaurant-header-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                        <div class="restaurant-info">
+                            <div class="restaurant-icon" style="font-size: 60px; animation: bounce 2s infinite;">🏪</div>
+                            <div class="restaurant-details">
+                                <h2 id="accountRestaurantName" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">اسم المطعم</h2>
+                                <p id="accountOwnerName" style="color: rgba(255,255,255,0.95);"><i class="fas fa-user-tie"></i> المالك: ---</p>
+                                <p id="accountPhone" style="color: rgba(255,255,255,0.95);"><i class="fas fa-phone-alt"></i> ---</p>
+                                <p id="accountAddress" style="color: rgba(255,255,255,0.95);"><i class="fas fa-map-marker-alt"></i> ---</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- بطاقة حالة الاشتراك -->
-                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
-                            <i class="fas fa-certificate"></i> حالة الاشتراك
+                    <div class="info-card" style="border-left: 4px solid var(--primary-color);">
+                        <h3>
+                            <i class="fas fa-certificate" style="color: #f39c12;"></i>
+                            حالة الاشتراك
                         </h3>
-                        <div id="subscriptionStatus" style="margin-top: 20px;">
-                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
-                                <span style="font-weight: 600;">حالة التطبيق:</span>
-                                <span id="appStatus" style="padding: 5px 15px; border-radius: 20px; background: #28a745; color: white;">نشط</span>
+                        <div id="subscriptionStatus">
+                            <div class="status-row">
+                                <span><i class="fas fa-info-circle" style="color: #3498db;"></i> حالة التطبيق:</span>
+                                <span class="status-badge active" id="appStatus">نشط</span>
                             </div>
-                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
-                                <span style="font-weight: 600;">تاريخ التسجيل:</span>
+                            <div class="status-row">
+                                <span><i class="fas fa-calendar-check" style="color: #27ae60;"></i> تاريخ التسجيل:</span>
                                 <span id="registrationDate">---</span>
                             </div>
-                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
-                                <span style="font-weight: 600;">نهاية الفترة التجريبية:</span>
+                            <div class="status-row">
+                                <span><i class="fas fa-calendar-times" style="color: #e74c3c;"></i> نهاية الفترة التجريبية:</span>
                                 <span id="trialEndDate">---</span>
                             </div>
-                            <div class="status-row" id="subscriptionEndRow" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px; display: none;">
-                                <span style="font-weight: 600;">نهاية الاشتراك السنوي:</span>
+                            <div class="status-row" id="subscriptionEndRow" style="display: none;">
+                                <span><i class="fas fa-calendar-alt" style="color: #9b59b6;"></i> نهاية الاشتراك السنوي:</span>
                                 <span id="subscriptionEndDate">---</span>
                             </div>
-                            <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                                <span style="font-weight: 600;">الأيام المتبقية:</span>
-                                <span id="daysRemaining" style="font-size: 18px; font-weight: bold; color: #28a745;">---</span>
+                            <div class="status-row">
+                                <span><i class="fas fa-clock" style="color: #f39c12;"></i> الأيام المتبقية:</span>
+                                <span class="days-remaining" id="daysRemaining">---</span>
                             </div>
                         </div>
 
                         <!-- زر تفعيل الاشتراك السنوي -->
-                        <div id="yearlyActivationSection" style="margin-top: 20px; display: none;">
-                            <button onclick="requestYearlyActivation()" class="btn-primary" style="width: 100%; padding: 15px; font-size: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                                <i class="fas fa-key"></i> طلب تفعيل الاشتراك السنوي (100 دولار)
+                        <div id="yearlyActivationSection" style="display: none; margin-top: 20px;">
+                            <button onclick="requestYearlyActivation()" class="yearly-activation-button" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; animation: pulse 2s infinite;">
+                                <i class="fas fa-crown" style="color: #ffd700;"></i>
+                                طلب تفعيل الاشتراك السنوي (100 دولار)
                             </button>
                         </div>
                     </div>
 
                     <!-- بطاقة النسخ السحابي -->
-                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
-                            <i class="fas fa-cloud"></i> النسخ الاحتياطي السحابي
+                    <div class="info-card" style="border-left: 4px solid #3498db;">
+                        <h3>
+                            <i class="fas fa-cloud-upload-alt" style="color: #3498db;"></i>
+                            النسخ الاحتياطي السحابي
                         </h3>
-                        <div id="cloudBackupStatus" style="margin-top: 20px;">
+                        <div id="cloudBackupStatus">
                             <!-- سيتم ملؤه ديناميكياً -->
                         </div>
 
                         <!-- أزرار الإدارة -->
-                        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button id="subscribeCloudBtn" onclick="showCloudSubscriptionModal()" class="btn-primary" style="flex: 1; padding: 12px;">
-                                <i class="fas fa-cloud-upload-alt"></i> الاشتراك في النسخ السحابي
+                        <div class="action-buttons-container" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                            <button id="subscribeCloudBtn" onclick="showCloudSubscriptionModal()" class="btn-primary" style="flex: 1; min-width: 200px;">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                الاشتراك في النسخ السحابي
                             </button>
-                            <button id="activateCloudBtn" onclick="showActivateCloudModal()" class="btn-success" style="flex: 1; padding: 12px; display: none;">
-                                <i class="fas fa-key"></i> تفعيل الاشتراك السحابي
+                            <button id="activateCloudBtn" onclick="showActivateCloudModal()" class="btn-success" style="display: none; flex: 1; min-width: 200px;">
+                                <i class="fas fa-key"></i>
+                                تفعيل الاشتراك السحابي
                             </button>
-                            <button id="disconnectCloudBtn" onclick="disconnectCloud()" class="btn-danger" style="flex: 1; padding: 12px; display: none;">
-                                <i class="fas fa-unlink"></i> قطع الاتصال
+                            <button id="disconnectCloudBtn" onclick="disconnectCloud()" class="btn-danger" style="display: none; flex: 1; min-width: 200px;">
+                                <i class="fas fa-unlink"></i>
+                                قطع الاتصال
                             </button>
                         </div>
                     </div>
 
                     <!-- بطاقة معرف الجهاز -->
-                    <div class="info-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                        <h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
-                            <i class="fas fa-desktop"></i> معلومات الجهاز
+                    <div class="info-card" style="border-left: 4px solid #27ae60;">
+                        <h3>
+                            <i class="fas fa-desktop" style="color: #27ae60;"></i>
+                            معلومات الجهاز
                         </h3>
-                        <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; align-items: center;">
-                            <span style="font-weight: 600;">معرف الجهاز:</span>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <code id="machineIdDisplay" style="background: #e9ecef; padding: 8px 15px; border-radius: 5px; font-family: monospace;">---</code>
-                                <button onclick="copyMachineId()" class="btn-icon" title="نسخ">
-                                    <i class="fas fa-copy"></i>
-                                </button>
+                        <div class="machine-id-display">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+                                    <i class="fas fa-microchip"></i> معرف الجهاز:
+                                </div>
+                                <code class="machine-id-code" id="machineIdDisplay" style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; display: block; font-size: 14px; letter-spacing: 1px;">---</code>
+                            </div>
+                            <button onclick="copyMachineId()" class="btn-icon" title="نسخ" style="background: var(--success-color); color: white;">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="info-message" style="margin-top: 15px; padding: 12px; background: #e8f5e9; border-radius: 8px;">
+                            <i class="fas fa-info-circle" style="color: #27ae60;"></i>
+                            استخدم هذا المعرف عند التواصل مع الدعم الفني
+                        </div>
+                    </div>
+
+                    <!-- بطاقة إحصائيات سريعة -->
+                    <div class="info-card" style="border-left: 4px solid #f39c12;">
+                        <h3>
+                            <i class="fas fa-chart-line" style="color: #f39c12;"></i>
+                            إحصائيات سريعة
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 12px; text-align: center; color: white;">
+                                <i class="fas fa-box" style="font-size: 24px; margin-bottom: 8px;"></i>
+                                <div style="font-size: 24px; font-weight: bold;" id="totalProducts">0</div>
+                                <div style="font-size: 12px; opacity: 0.9;">منتج</div>
+                            </div>
+                            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 15px; border-radius: 12px; text-align: center; color: white;">
+                                <i class="fas fa-file-invoice" style="font-size: 24px; margin-bottom: 8px;"></i>
+                                <div style="font-size: 24px; font-weight: bold;" id="totalInvoices">0</div>
+                                <div style="font-size: 12px; opacity: 0.9;">فاتورة</div>
+                            </div>
+                            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 12px; text-align: center; color: white;">
+                                <i class="fas fa-users" style="font-size: 24px; margin-bottom: 8px;"></i>
+                                <div style="font-size: 24px; font-weight: bold;" id="totalUsers">0</div>
+                                <div style="font-size: 12px; opacity: 0.9;">مستخدم</div>
                             </div>
                         </div>
-                        <p style="margin-top: 15px; color: #666; font-size: 14px;">
-                            <i class="fas fa-info-circle"></i> استخدم هذا المعرف عند التواصل مع الدعم الفني
-                        </p>
                     </div>
                 </div>
             </div>
@@ -2107,28 +2548,40 @@
                     </button>
                 </div>
 
+                <!-- بطاقة تصدير البيانات -->
                 <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-download"></i> تصدير البيانات</h3>
+                    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <h3><i class="fas fa-file-export"></i> تصدير البيانات</h3>
                     </div>
                     <div class="card-body">
                         <p style="margin-bottom: 15px; color: var(--text-secondary);">
                             قم بتصدير جميع البيانات بما في ذلك المنتجات، التصنيفات، الفواتير، المصاريف، الموظفين، والإعدادات
                         </p>
-                        <button class="btn btn-primary" onclick="exportData()">
-                            <i class="fas fa-file-export"></i>
-                            تصدير جميع البيانات
-                        </button>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                            <button class="btn btn-success" onclick="exportData()">
+                                <i class="fas fa-file-code"></i>
+                                تصدير JSON
+                            </button>
+                            <button class="btn btn-danger" onclick="exportDataAsPDF()">
+                                <i class="fas fa-file-pdf"></i>
+                                تصدير PDF
+                            </button>
+                            <button class="btn btn-info" onclick="exportDataAsExcel()">
+                                <i class="fas fa-file-excel"></i>
+                                تصدير Excel
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- بطاقة استيراد البيانات -->
                 <div class="card mt-20">
-                    <div class="card-header">
-                        <h3><i class="fas fa-upload"></i> استيراد البيانات</h3>
+                    <div class="card-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <h3><i class="fas fa-file-import"></i> استيراد البيانات</h3>
                     </div>
                     <div class="card-body">
                         <p style="margin-bottom: 15px; color: var(--text-secondary);">
-                            استرجع البيانات من نسخة احتياطية سابقة
+                            استرجع البيانات من نسخة احتياطية سابقة (JSON فقط)
                         </p>
                         <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
                         <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">
@@ -2138,31 +2591,65 @@
                     </div>
                 </div>
 
+                <!-- بطاقة النسخ السحابي -->
                 <div class="card mt-20">
-                    <div class="card-header">
+                    <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
                         <h3><i class="fas fa-cloud"></i> النسخ السحابي (Firebase)</h3>
                     </div>
                     <div class="card-body">
                         <div id="cloudStatus" style="margin-bottom: 15px; padding: 15px; background: var(--bg-tertiary); border-radius: 8px;">
                             <p style="margin-bottom: 10px; color: var(--text-secondary);">
-                                حالة الاتصال: <span id="cloudConnectionStatus" style="font-weight: 700; color: var(--danger-color);">غير متصل</span>
+                                <i class="fas fa-signal"></i> حالة الاتصال: <span id="cloudConnectionStatus" style="font-weight: 700; color: var(--danger-color);">غير متصل</span>
                             </p>
                             <p style="margin-bottom: 0; color: var(--text-secondary);">
-                                آخر مزامنة: <span id="lastSyncTime" style="font-weight: 700;">لم يتم</span>
+                                <i class="fas fa-history"></i> آخر مزامنة: <span id="lastSyncTime" style="font-weight: 700;">لم يتم</span>
                             </p>
                         </div>
-                        <button class="btn btn-info" onclick="showCloudSubscriptionModal()" id="cloudSubscribeBtn">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            الاشتراك في النسخ السحابي
-                        </button>
-                        <button class="btn btn-success hidden" onclick="syncToCloud()" id="cloudSyncBtn">
-                            <i class="fas fa-sync"></i>
-                            مزامنة البيانات
-                        </button>
-                        <button class="btn btn-danger hidden" onclick="disconnectCloud()" id="cloudDisconnectBtn">
-                            <i class="fas fa-unlink"></i>
-                            قطع الاتصال
-                        </button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-info" onclick="showCloudSubscriptionModal()" id="cloudSubscribeBtn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                الاشتراك في النسخ السحابي
+                            </button>
+                            <button class="btn btn-success hidden" onclick="syncToCloud()" id="cloudSyncBtn">
+                                <i class="fas fa-sync"></i>
+                                مزامنة البيانات
+                            </button>
+                            <button class="btn btn-danger hidden" onclick="disconnectCloud()" id="cloudDisconnectBtn">
+                                <i class="fas fa-unlink"></i>
+                                قطع الاتصال
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- بطاقة إدارة البيانات والصيانة -->
+                <div class="card mt-20">
+                    <div class="card-header" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                        <h3><i class="fas fa-tools"></i> إدارة البيانات والصيانة</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="warning-message" style="background: #fff3cd; border-right: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <p style="margin: 0; color: #856404;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>تحذير:</strong> العمليات التالية لا يمكن التراجع عنها. تأكد من عمل نسخة احتياطية قبل المتابعة.
+                            </p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                            <button class="btn btn-warning" onclick="clearAllData()" style="min-height: 50px;">
+                                <i class="fas fa-trash-alt"></i>
+                                مسح جميع البيانات
+                            </button>
+                            <button class="btn btn-danger" onclick="factoryReset()" style="min-height: 50px;">
+                                <i class="fas fa-undo-alt"></i>
+                                إعادة ضبط المصنع
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-radius: 8px;">
+                            <p style="margin: 0; color: #1976d2; font-size: 14px;">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>ملاحظة:</strong> إعادة ضبط المصنع ستحذف جميع البيانات والإعدادات وتعيد التطبيق لحالته الأولية.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2174,10 +2661,22 @@
                         <i class="fas fa-users-cog"></i>
                         إدارة المستخدمين
                     </h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="showAddUserModal()">
                             <i class="fas fa-user-plus"></i>
                             إضافة مستخدم
+                        </button>
+                        <button class="btn btn-success" onclick="exportToExcel('users')">
+                            <i class="fas fa-file-excel"></i>
+                            Excel
+                        </button>
+                        <button class="btn btn-warning" onclick="exportToPDF('users')">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="btn btn-dark" onclick="exportSectionAsJSON('users', LocalDB.KEYS.USERS)" style="background: #343a40;">
+                            <i class="fas fa-file-code"></i>
+                            JSON
                         </button>
                         <button class="btn btn-secondary" onclick="showPage('homePage')">
                             <i class="fas fa-arrow-right"></i>
@@ -2232,7 +2731,7 @@
                         <i class="fas fa-user-tie"></i>
                         إدارة الموظفين
                     </h2>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="showAddEmployeeModal()">
                             <i class="fas fa-user-plus"></i>
                             إضافة موظف
@@ -2244,6 +2743,10 @@
                         <button class="btn btn-warning" onclick="exportToPDF('employees')">
                             <i class="fas fa-file-pdf"></i>
                             PDF
+                        </button>
+                        <button class="btn btn-dark" onclick="exportSectionAsJSON('employees', LocalDB.KEYS.EMPLOYEES)" style="background: #343a40;">
+                            <i class="fas fa-file-code"></i>
+                            JSON
                         </button>
                         <button class="btn btn-secondary" onclick="showPage('homePage')">
                             <i class="fas fa-arrow-right"></i>
@@ -2847,7 +3350,7 @@
         // ==================== نظام التسجيل والتفعيل ====================
         
         // التحقق من حالة التسجيل عند بدء التطبيق
-        function checkAppRegistration() {
+        async function checkAppRegistration() {
             const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
             
             if (!registration) {
@@ -2856,8 +3359,8 @@
                 return false;
             }
 
-            // التحقق من حالة الاشتراك
-            return checkSubscriptionStatus(registration);
+            // التحقق من حالة الاشتراك (async)
+            return await checkSubscriptionStatus(registration);
         }
 
         function showRegistrationScreen() {
@@ -2936,15 +3439,62 @@
         }
 
         // التحقق من حالة الاشتراك
-        function checkSubscriptionStatus(registration) {
+        async function checkSubscriptionStatus(registration) {
+            console.log('🔍 Checking subscription status...');
+            console.log('Current local status:', registration.status);
+            console.log('Machine ID:', registration.machineId);
+            
+            // أولاً: التحقق من Firebase إذا كان متاحاً
+            if (firebaseDB && registration.machineId) {
+                try {
+                    console.log('🌐 Checking Firebase for activation status...');
+                    const cloudSnapshot = await firebaseDB.ref(`cloud_subscriptions/${registration.machineId}`).once('value');
+                    
+                    if (cloudSnapshot.exists()) {
+                        const cloudData = cloudSnapshot.val();
+                        console.log('☁️ Cloud data found:', cloudData);
+                        
+                        // إذا كان مفعل في Firebase، تحديث الحالة المحلية
+                        if (cloudData.activated === true && cloudData.status === 'active') {
+                            console.log('✅ User is activated in Firebase - updating local status');
+                            registration.status = 'active';
+                            registration.activationCode = cloudData.activationCode || cloudData.subscriptionCode;
+                            registration.activatedAt = cloudData.activatedAt;
+                            
+                            // حساب تاريخ انتهاء الاشتراك (سنة من تاريخ التفعيل)
+                            const activatedDate = new Date(cloudData.activatedAt);
+                            const subscriptionEnd = new Date(activatedDate);
+                            subscriptionEnd.setFullYear(subscriptionEnd.getFullYear() + 1);
+                            registration.subscriptionEndDate = subscriptionEnd.toISOString();
+                            
+                            LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                            console.log('💾 Local status updated to active');
+                            return true; // المستخدم مفعل
+                        } else {
+                            console.log('ℹ️ User not activated in Firebase');
+                        }
+                    } else {
+                        console.log('ℹ️ No cloud data found for this machine');
+                    }
+                } catch (error) {
+                    console.error('❌ Firebase check error:', error);
+                    // في حالة الخطأ، نتابع التحقق المحلي
+                }
+            } else {
+                console.log('ℹ️ Firebase not available or no machine ID');
+            }
+
+            // ثانياً: التحقق من الحالة المحلية
             const now = new Date();
             const trialEnd = new Date(registration.trialEndDate);
 
             if (registration.status === 'active' && registration.activationCode) {
+                console.log('✅ User has active subscription locally');
                 // اشتراك نشط - التحقق من تاريخ الانتهاء
                 if (registration.subscriptionEndDate) {
                     const subEnd = new Date(registration.subscriptionEndDate);
                     if (now > subEnd) {
+                        console.log('⚠️ Subscription expired');
                         // انتهى الاشتراك - طلب التجديد
                         showRenewalScreen();
                         return false;
@@ -2954,18 +3504,21 @@
             }
 
             if (registration.status === 'trial') {
+                console.log('ℹ️ User is in trial period');
                 if (now > trialEnd) {
+                    console.log('⚠️ Trial period expired');
                     // انتهت الفترة التجريبية
                     showTrialExpiredScreen();
                     return false;
                 }
                 // لا زال في الفترة التجريبية
                 const daysLeft = Math.ceil((trialEnd - now) / (24 * 60 * 60 * 1000));
-                console.log(`أيام متبقية من الفترة التجريبية: ${daysLeft}`);
+                console.log(`ℹ️ Trial days remaining: ${daysLeft}`);
                 return true;
             }
 
             // حالة غير معروفة
+            console.log('⚠️ Unknown status, showing expired screen');
             showTrialExpiredScreen();
             return false;
         }
@@ -3022,7 +3575,7 @@
         }
 
         // تفعيل الاشتراك بالكود
-        function activateWithCode(event) {
+        async function activateWithCode(event) {
             event.preventDefault();
             
             const code = document.getElementById('activationCode').value.trim().toUpperCase();
@@ -3033,35 +3586,82 @@
                 return;
             }
 
-            // التحقق من الكود في Firebase
+            console.log('🔑 Activating with code:', code);
+            console.log('📱 Machine ID:', registration.machineId);
+
+            // التحقق من الكود في Firebase - cloud_subscriptions
             if (firebaseDB) {
-                const activationRef = firebaseDB.ref('activations/' + registration.machineId);
-                activationRef.once('value').then(snapshot => {
-                    const activationData = snapshot.val();
+                try {
+                    console.log('🌐 Checking cloud_subscriptions in Firebase...');
+                    const cloudRef = firebaseDB.ref(`cloud_subscriptions/${registration.machineId}`);
+                    const snapshot = await cloudRef.once('value');
                     
-                    if (activationData && activationData.code === code && activationData.valid) {
-                        // كود صحيح - تفعيل الاشتراك
+                    if (!snapshot.exists()) {
+                        console.log('❌ No data found for this machine');
+                        showNotification('لم يتم العثور على بيانات التفعيل. تواصل مع الدعم الفني', 'error');
+                        return;
+                    }
+                    
+                    const cloudData = snapshot.val();
+                    console.log('☁️ Cloud data:', cloudData);
+                    
+                    // تنظيف الأكواد للمقارنة - إزالة المسافات والشرطات
+                    const cleanInputCode = code.toUpperCase().replace(/[\s-]/g, '');
+                    
+                    // البحث في جميع حقول الكود الممكنة
+                    let dbCode = '';
+                    if (cloudData.activationCode) {
+                        dbCode = String(cloudData.activationCode).trim().toUpperCase().replace(/[\s-]/g, '');
+                    } else if (cloudData.subscriptionCode) {
+                        dbCode = String(cloudData.subscriptionCode).trim().toUpperCase().replace(/[\s-]/g, '');
+                    }
+                    
+                    console.log('🔍 Comparing codes:');
+                    console.log('   Input:', cleanInputCode);
+                    console.log('   Database:', dbCode);
+                    
+                    if (dbCode && cleanInputCode === dbCode) {
+                        console.log('✅ Code is correct! Activating...');
+                        
+                        // تحديث Firebase أولاً
+                        await cloudRef.update({
+                            activated: true,
+                            status: 'active',
+                            activatedAt: new Date().toISOString()
+                        });
+                        console.log('☁️ Firebase updated');
+                        
+                        // تحديث البيانات المحلية
                         registration.status = 'active';
-                        registration.activationCode = code;
+                        registration.activationCode = cloudData.activationCode || cloudData.subscriptionCode;
                         registration.activationDate = new Date().toISOString();
-                        registration.subscriptionEndDate = new Date(Date.now() + YEARLY_SUBSCRIPTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+                        
+                        // حساب تاريخ انتهاء الاشتراك (سنة من الآن)
+                        const subscriptionEnd = new Date();
+                        subscriptionEnd.setFullYear(subscriptionEnd.getFullYear() + 1);
+                        registration.subscriptionEndDate = subscriptionEnd.toISOString();
                         
                         LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                        console.log('💾 Local data updated');
                         
-                        // تحديث حالة التفعيل في Firebase
-                        activationRef.update({ used: true, usedAt: new Date().toISOString() });
-                        
+                        // إخفاء شاشة الانتهاء
                         document.getElementById('trialExpiredScreen').classList.add('hidden');
                         document.getElementById('loginScreen').classList.remove('hidden');
                         
-                        showNotification('تم التفعيل بنجاح! مرحباً بك', 'success');
+                        showNotification('🎉 تم التفعيل بنجاح! مرحباً بك', 'success');
+                        
+                        // إعادة تحميل الصفحة لتحديث الحالة
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
                     } else {
-                        showNotification('رمز التفعيل غير صحيح', 'error');
+                        console.log('❌ Code mismatch');
+                        showNotification('❌ رمز التفعيل غير صحيح. تأكد من إدخال الرمز بشكل صحيح', 'error');
                     }
-                }).catch(err => {
-                    console.error('Activation check error:', err);
-                    showNotification('خطأ في التحقق من رمز التفعيل', 'error');
-                });
+                } catch (error) {
+                    console.error('❌ Activation error:', error);
+                    showNotification('حدث خطأ في التحقق من رمز التفعيل: ' + error.message, 'error');
+                }
             } else {
                 showNotification('لا يمكن التحقق من رمز التفعيل بدون اتصال بالإنترنت', 'error');
             }
@@ -3248,6 +3848,8 @@
                     }
                 } else if (pageId === 'employeesPage') {
                     loadEmployees();
+                } else if (pageId === 'myAccountPage') {
+                    loadAccountInfo();
                 } else if (pageId === 'backupPage') {
                     updateCloudStatus();
                 }
@@ -3489,18 +4091,12 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick='viewUserDetails(${JSON.stringify(user)})' title="عرض">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})" title="تعديل">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm ${user.active !== false ? 'btn-danger' : 'btn-success'}" onclick="toggleUserStatus(${user.id})" title="${user.active !== false ? 'تعطيل' : 'تفعيل'}">
-                                        <i class="fas fa-${user.active !== false ? 'ban' : 'check'}"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})" title="حذف">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                                        <button class="btn btn-sm btn-info action-btn" onclick='viewUserDetails(${JSON.stringify(user)})' title="عرض"><i class="fas fa-eye"></i></button>
+                                        <button class="btn btn-sm btn-warning action-btn" onclick="editUser(${user.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm ${user.active !== false ? 'btn-danger' : 'btn-success'} action-btn" onclick="toggleUserStatus(${user.id})" title="${user.active !== false ? 'تعطيل' : 'تفعيل'}"><i class="fas fa-${user.active !== false ? 'ban' : 'check'}"></i></button>
+                                        <button class="btn btn-sm btn-danger action-btn" onclick="deleteUser(${user.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}
@@ -3831,6 +4427,9 @@
             document.getElementById('totalUsers').textContent = totalUsers;
             document.getElementById('totalAdmins').textContent = admins;
             document.getElementById('activeUsers').textContent = activeUsers;
+            
+            // تحديث الإحصائيات السريعة
+            updateQuickStats();
 
             if (users.length === 0) {
                 container.innerHTML = '<p style="text-align: center; padding: 20px;">لا يوجد مستخدمين</p>';
@@ -4535,15 +5134,11 @@
                                     <td style="color: var(--success-color);">${formatNumber(profit)} د.ع</td>
                                     <td>${product.addedBy || 'admin'}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-info" onclick='viewProductDetails(${JSON.stringify(product)})' title="عرض">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-warning" onclick="editProduct(${product.id})" title="تعديل">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})" title="حذف">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                                            <button class="btn btn-sm btn-info action-btn" onclick='viewProductDetails(${JSON.stringify(product)})' title="عرض"><i class="fas fa-eye"></i></button>
+                                            <button class="btn btn-sm btn-warning action-btn" onclick="editProduct(${product.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger action-btn" onclick="deleteProduct(${product.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
@@ -4634,6 +5229,9 @@
                 document.getElementById('avgCost').textContent = '0 د.ع';
                 document.getElementById('avgProfit').textContent = '0 د.ع';
             }
+            
+            // تحديث الإحصائيات السريعة
+            updateQuickStats();
         }
 
         // إدارة التصنيفات
@@ -4703,15 +5301,11 @@
                                 <td>${cat.description || '-'}</td>
                                 <td>${cat.addedBy || 'admin'}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick='viewCategoryDetails(${JSON.stringify(cat)})' title="عرض">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editCategory(${cat.id})" title="تعديل">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})" title="حذف">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                                        <button class="btn btn-sm btn-info action-btn" onclick='viewCategoryDetails(${JSON.stringify(cat)})' title="عرض"><i class="fas fa-eye"></i></button>
+                                        <button class="btn btn-sm btn-warning action-btn" onclick="editCategory(${cat.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger action-btn" onclick="deleteCategory(${cat.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}
@@ -4877,15 +5471,11 @@
                                     <td>${formatDate(expense.date)}</td>
                                     <td>${expense.addedBy || 'admin'}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-info" onclick='viewExpenseDetails(${JSON.stringify(expense)})' title="عرض">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-warning" onclick="editExpense(${expense.id})" title="تعديل">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteExpense(${expense.id})" title="حذف">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                                            <button class="btn btn-sm btn-info action-btn" onclick='viewExpenseDetails(${JSON.stringify(expense)})' title="عرض"><i class="fas fa-eye"></i></button>
+                                            <button class="btn btn-sm btn-warning action-btn" onclick="editExpense(${expense.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger action-btn" onclick="deleteExpense(${expense.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
@@ -4972,6 +5562,9 @@
             document.getElementById('totalSales').textContent = formatNumber(totalSales) + ' د.ع';
             document.getElementById('totalProfitInvoices').textContent = formatNumber(totalProfit) + ' د.ع';
             document.getElementById('profitMargin').textContent = margin + '%';
+            
+            // تحديث الإحصائيات السريعة
+            updateQuickStats();
 
             if (filteredInvoices.length === 0) {
                 container.innerHTML = '<p style="text-align: center; padding: 20px;">لا توجد فواتير</p>';
@@ -5001,12 +5594,10 @@
                                 <td>${formatNumber(invoice.total)} د.ع</td>
                                 <td style="color: var(--success-color);">${formatNumber(invoice.profit || 0)} د.ع</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick='viewInvoiceDetails(${JSON.stringify(invoice)})' title="عرض">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${invoice.id})" title="حذف">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                                        <button class="btn btn-sm btn-info action-btn" onclick='viewInvoiceDetails(${JSON.stringify(invoice)})' title="عرض"><i class="fas fa-eye"></i></button>
+                                        <button class="btn btn-sm btn-danger action-btn" onclick="deleteInvoice(${invoice.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}
@@ -5490,34 +6081,25 @@
 
             // التحقق من كود التفعيل في Firebase
             if (firebaseDB) {
-                const activationRef = firebaseDB.ref('cloud_activations/' + cloudConfig.userId);
-                
+                // البحث في مسار معرف الجهاز بدلاً من معرف المستخدم
+                const activationRef = firebaseDB.ref('الاشتراكات السحابية/' + cloudConfig.machineId);
                 activationRef.once('value').then(snapshot => {
                     const activationData = snapshot.val();
-                    
-                    if (activationData && activationData.code === activationCode && activationData.valid) {
+                    // مقارنة الكود بدون حساسية حالة الأحرف ومسافات
+                    const dbCode = activationData && activationData["رمز الاشتراك"] ? String(activationData["رمز الاشتراك"]).trim().toUpperCase() : '';
+                    if (activationData && dbCode === activationCode) {
                         // كود صحيح - تفعيل الاشتراك
                         cloudConfig.active = true;
                         cloudConfig.pending = false;
                         cloudConfig.activationCode = activationCode;
                         cloudConfig.activationDate = new Date().toISOString();
                         cloudConfig.subscriptionEndDate = new Date(Date.now() + YEARLY_SUBSCRIPTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
-                        
                         LocalDB.save(LocalDB.KEYS.CLOUD_CONFIG, cloudConfig);
-                        
                         // تحديث حالة التفعيل في Firebase
-                        activationRef.update({ 
-                            used: true, 
-                            usedAt: new Date().toISOString(),
-                            activatedBy: cloudConfig.username
-                        });
-
-                        // رفع البيانات الأولية
+                        activationRef.update({ حالة: true, used: true, usedAt: new Date().toISOString(), activatedBy: cloudConfig.username });
                         syncToCloud(true);
-                        
                         closeModal('cloudSubscriptionModal');
                         updateCloudStatus();
-                        
                         showNotification('تم تفعيل النسخ السحابي بنجاح! 🎉', 'success');
                     } else {
                         showNotification('كود التفعيل غير صحيح أو منتهي الصلاحية', 'error');
@@ -5708,6 +6290,9 @@
             document.getElementById('invoiceCount').textContent = invoices.length;
             document.getElementById('productCount').textContent = products.length;
             document.getElementById('netProfit').textContent = formatNumber(netProfit) + ' د.ع';
+            
+            // تحديث الإحصائيات السريعة
+            updateQuickStats();
         }
 
         // دوال مساعدة
@@ -5733,25 +6318,15 @@
         }
 
         function minimizeWindow() {
-            if (window.electronAPI) {
-                window.electronAPI.minimize();
-            }
+            window.electronAPI && window.electronAPI.minimize && window.electronAPI.minimize();
         }
 
         function maximizeWindow() {
-            if (window.electronAPI) {
-                window.electronAPI.maximize();
-            }
+            window.electronAPI && window.electronAPI.maximize && window.electronAPI.maximize();
         }
 
         function closeWindow() {
-            if (window.electronAPI) {
-                window.electronAPI.close();
-            } else {
-                if (confirm('هل تريد إغلاق التطبيق؟')) {
-                    window.close();
-                }
-            }
+            window.electronAPI && window.electronAPI.close && window.electronAPI.close();
         }
 
         // إغلاق المودال عند الضغط خارجه
@@ -5760,6 +6335,21 @@
                 event.target.style.display = 'none';
             }
         };
+
+        // دوال فتح وإغلاق Modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
 
         // ==================== قسم "حسابي" ====================
         
@@ -5770,7 +6360,7 @@
         }
 
         // تحميل معلومات الحساب
-        function loadAccountInfo() {
+        async function loadAccountInfo() {
             const registration = LocalDB.get(LocalDB.KEYS.APP_REGISTRATION);
             const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
 
@@ -5778,9 +6368,32 @@
 
             // ملء معلومات المطعم
             document.getElementById('accountRestaurantName').textContent = registration.restaurantName;
-            document.getElementById('accountOwnerName').textContent = 'المالك: ' + registration.ownerName;
-            document.getElementById('accountPhone').textContent = '📱 ' + registration.phone;
-            document.getElementById('accountAddress').textContent = '📍 ' + registration.address;
+            document.getElementById('accountOwnerName').innerHTML = '<i class="fas fa-user"></i> المالك: ' + registration.ownerName;
+            document.getElementById('accountPhone').innerHTML = '<i class="fas fa-phone-alt"></i> ' + registration.phone;
+            document.getElementById('accountAddress').innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + registration.address;
+
+            // التحقق من حالة الاشتراك في Firebase
+            let isCloudActive = false;
+            let cloudActivationData = null;
+            
+            try {
+                if (firebaseDB && registration.machineId) {
+                    const snapshot = await firebaseDB.ref(`cloud_subscriptions/${registration.machineId}`).once('value');
+                    if (snapshot.exists()) {
+                        cloudActivationData = snapshot.val();
+                        isCloudActive = cloudActivationData.activated === true && cloudActivationData.status === 'active';
+                        
+                        // تحديث الحالة المحلية إذا كانت مختلفة
+                        if (isCloudActive && registration.status !== 'active') {
+                            registration.status = 'active';
+                            registration.activatedAt = cloudActivationData.activatedAt;
+                            LocalDB.save(LocalDB.KEYS.APP_REGISTRATION, registration);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Could not check cloud activation:', error);
+            }
 
             // ملء حالة الاشتراك
             const now = new Date();
@@ -5794,26 +6407,37 @@
             const statusEl = document.getElementById('appStatus');
             const daysEl = document.getElementById('daysRemaining');
             
-            if (registration.status === 'active') {
-                statusEl.textContent = 'نشط (مفعّل)';
-                statusEl.style.background = '#28a745';
+            if (isCloudActive || registration.status === 'active') {
+                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> الخطة النشطة';
+                statusEl.className = 'status-badge active';
+                statusEl.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                statusEl.style.color = '#fff';
+                statusEl.style.padding = '10px 20px';
+                statusEl.style.borderRadius = '8px';
+                statusEl.style.fontSize = '16px';
+                statusEl.style.fontWeight = 'bold';
                 
                 if (registration.subscriptionEndDate) {
                     const subEnd = new Date(registration.subscriptionEndDate);
                     const daysLeftSub = Math.ceil((subEnd - now) / (24 * 60 * 60 * 1000));
                     document.getElementById('subscriptionEndDate').textContent = formatDate(registration.subscriptionEndDate);
                     document.getElementById('subscriptionEndRow').style.display = 'flex';
-                    daysEl.textContent = daysLeftSub + ' يوم';
-                    daysEl.style.color = daysLeftSub < 30 ? '#dc3545' : '#28a745';
+                    daysEl.innerHTML = '<i class="fas fa-infinity"></i> غير محدود';
+                    daysEl.style.color = '#10b981';
+                    daysEl.style.fontWeight = 'bold';
+                } else {
+                    daysEl.innerHTML = '<i class="fas fa-infinity"></i> غير محدود';
+                    daysEl.style.color = '#10b981';
+                    daysEl.style.fontWeight = 'bold';
                 }
                 
                 // إخفاء زر التفعيل
                 document.getElementById('yearlyActivationSection').style.display = 'none';
             } else if (registration.status === 'trial') {
                 statusEl.textContent = 'فترة تجريبية';
-                statusEl.style.background = '#ffc107';
+                statusEl.className = 'status-badge trial';
                 daysEl.textContent = daysLeft > 0 ? daysLeft + ' يوم' : 'انتهت';
-                daysEl.style.color = daysLeft < 3 ? '#dc3545' : '#ffc107';
+                daysEl.style.color = daysLeft < 3 ? '#ef4444' : '#f59e0b';
                 
                 // إظهار زر التفعيل إذا اقترب انتهاء الفترة أو انتهت
                 if (daysLeft <= 3) {
@@ -5821,9 +6445,9 @@
                 }
             } else {
                 statusEl.textContent = 'منتهي';
-                statusEl.style.background = '#dc3545';
+                statusEl.className = 'status-badge expired';
                 daysEl.textContent = '0 يوم';
-                daysEl.style.color = '#dc3545';
+                daysEl.style.color = '#ef4444';
                 
                 // إظهار زر التفعيل
                 document.getElementById('yearlyActivationSection').style.display = 'block';
@@ -5833,18 +6457,21 @@
             const cloudStatusEl = document.getElementById('cloudBackupStatus');
             if (cloudConfig && cloudConfig.active) {
                 cloudStatusEl.innerHTML = `
-                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #d4edda; border-radius: 10px; margin-bottom: 10px; border: 2px solid #28a745;">
-                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
-                        <span style="color: #28a745; font-weight: bold;">
-                            <i class="fas fa-check-circle"></i> مفعّل
-                        </span>
+                    <div class="cloud-status-indicator active">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">
+                                <i class="fas fa-check-circle"></i> مفعّل
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9;">النسخ الاحتياطي يعمل بشكل تلقائي</div>
+                        </div>
+                        <i class="fas fa-cloud-upload-alt"></i>
                     </div>
-                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
-                        <span style="font-weight: 600;">اسم المستخدم:</span>
+                    <div class="status-row">
+                        <span><i class="fas fa-user"></i> اسم المستخدم:</span>
                         <span>${cloudConfig.username}</span>
                     </div>
-                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 10px;">
-                        <span style="font-weight: 600;">آخر مزامنة:</span>
+                    <div class="status-row">
+                        <span><i class="fas fa-sync-alt"></i> آخر مزامنة:</span>
                         <span>${cloudConfig.lastSync ? formatDate(cloudConfig.lastSync) : 'لم تتم بعد'}</span>
                     </div>
                 `;
@@ -5855,15 +6482,19 @@
                 document.getElementById('disconnectCloudBtn').style.display = 'block';
             } else if (cloudConfig && cloudConfig.pending) {
                 cloudStatusEl.innerHTML = `
-                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #fff3cd; border-radius: 10px; margin-bottom: 10px; border: 2px solid #ffc107;">
-                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
-                        <span style="color: #856404; font-weight: bold;">
-                            <i class="fas fa-hourglass-half"></i> في انتظار التفعيل
-                        </span>
+                    <div class="cloud-status-indicator pending">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">
+                                <i class="fas fa-hourglass-half"></i> في انتظار التفعيل
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9;">أدخل رمز التفعيل لإكمال الاشتراك</div>
+                        </div>
+                        <i class="fas fa-clock"></i>
                     </div>
-                    <p style="margin: 15px 0; color: #666; font-size: 14px;">
-                        <i class="fas fa-info-circle"></i> تم إرسال طلب الاشتراك. استخدم رمز التفعيل من الشركة لإكمال التفعيل.
-                    </p>
+                    <div class="info-message">
+                        <i class="fas fa-info-circle"></i>
+                        تم إرسال طلب الاشتراك. استخدم رمز التفعيل من الشركة لإكمال التفعيل.
+                    </div>
                 `;
                 
                 // إخفاء زر الاشتراك، إظهار زر التفعيل
@@ -5872,15 +6503,19 @@
                 document.getElementById('disconnectCloudBtn').style.display = 'none';
             } else {
                 cloudStatusEl.innerHTML = `
-                    <div class="status-row" style="display: flex; justify-content: space-between; padding: 15px; background: #f8d7da; border-radius: 10px; margin-bottom: 10px; border: 2px solid #dc3545;">
-                        <span style="font-weight: 600;">حالة النسخ السحابي:</span>
-                        <span style="color: #721c24; font-weight: bold;">
-                            <i class="fas fa-times-circle"></i> غير مفعّل
-                        </span>
+                    <div class="cloud-status-indicator inactive">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">
+                                <i class="fas fa-times-circle"></i> غير مفعّل
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.9;">قم بالاشتراك لحماية بياناتك</div>
+                        </div>
+                        <i class="fas fa-cloud-slash"></i>
                     </div>
-                    <p style="margin: 15px 0; color: #666; font-size: 14px;">
-                        <i class="fas fa-info-circle"></i> اشترك في النسخ السحابي لحماية بياناتك والوصول إليها من أي مكان.
-                    </p>
+                    <div class="info-message">
+                        <i class="fas fa-info-circle"></i>
+                        اشترك في النسخ السحابي لحماية بياناتك والوصول إليها من أي مكان.
+                    </div>
                 `;
                 
                 // إظهار زر الاشتراك فقط
@@ -5899,6 +6534,23 @@
             navigator.clipboard.writeText(machineId).then(() => {
                 showNotification('تم نسخ معرف الجهاز', 'success');
             });
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                currentUser = null;
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                showNotification('تم تسجيل الخروج بنجاح', 'success');
+            }
+        }
+
+        // تحديث الصفحة
+        function refreshPage() {
+            location.reload();
         }
 
         // ==================== نظام الاشتراك السحابي المحسّن ====================
@@ -6026,7 +6678,14 @@
                 subscriptionRef.once('value').then(snapshot => {
                     const data = snapshot.val();
                     
-                    if (data && data.activationCode === code) {
+                    console.log('Cloud subscription data:', data);
+                    console.log('Input code:', code);
+                    
+                    // تحسين المقارنة - إزالة المسافات ومقارنة بدون حساسية للحالة
+                    const dbCode = data && data.activationCode ? 
+                        String(data.activationCode).trim().toUpperCase() : '';
+                    
+                    if (data && dbCode === code) {
                         // كود صحيح - تفعيل الاشتراك
                         cloudConfig.active = true;
                         cloudConfig.pending = false;
@@ -6049,14 +6708,15 @@
                         // رفع البيانات للسحابة لأول مرة
                         syncToCloud(true);
                         
-                        // تحديث واجهة حسابي
-                        loadAccountInfo();
+                        // تحديث واجهة الصفحة الحالية
+                        updateCloudStatus();
                     } else {
-                        showNotification('رمز التفعيل غير صحيح', 'error');
+                        console.log('Code mismatch - DB:', dbCode, 'Input:', code);
+                        showNotification('رمز التفعيل غير صحيح. تأكد من إدخال الرمز بشكل صحيح', 'error');
                     }
                 }).catch(err => {
                     console.error('Activation check error:', err);
-                    showNotification('خطأ في التحقق من رمز التفعيل', 'error');
+                    showNotification('خطأ في التحقق من رمز التفعيل: ' + err.message, 'error');
                 });
             } else {
                 showNotification('لا يمكن التحقق من رمز التفعيل بدون اتصال بالإنترنت', 'error');
@@ -6247,18 +6907,12 @@
         }
 
         // التهيئة عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             loadTheme();
             loadSettings();
-            
             // التحقق من التسجيل الأولي
-            const isRegistered = checkAppRegistration();
-            
-            if (!isRegistered) {
-                // التطبيق غير مسجل أو انتهت الفترة
-                return;
-            }
-            
+            const isRegistered = await checkAppRegistration();
+            if (!isRegistered) return;
             // التحقق من المستخدم المسجل دخوله
             currentUser = LocalDB.get(LocalDB.KEYS.CURRENT_USER);
             if (currentUser) {
@@ -6269,10 +6923,34 @@
                 checkUserPermissions();
                 updateCloudStatus();
             }
-
             // تسجيل Service Worker للـ PWA
             registerServiceWorker();
             setupPWAInstall();
+
+            // مراقبة إغلاق الصفحة للمشتركين السحابيين فقط
+            let cloudBackupPending = false;
+            window.addEventListener('beforeunload', function (e) {
+                const cloudConfig = LocalDB.get(LocalDB.KEYS.CLOUD_CONFIG);
+                if (cloudConfig && cloudConfig.active && !cloudBackupPending) {
+                    document.getElementById('cloudBackupPrompt').style.display = 'flex';
+                    cloudBackupPending = true;
+                    e.preventDefault();
+                    e.returnValue = '';
+                    return '';
+                }
+            });
+            document.getElementById('cloudBackupConfirmBtn').onclick = function() {
+                document.getElementById('cloudBackupPrompt').style.display = 'none';
+                cloudBackupPending = false;
+                syncToCloud(true);
+                showNotification('تم رفع النسخة الاحتياطية للسحابة', 'success');
+                setTimeout(() => { window.close(); }, 800);
+            };
+            document.getElementById('cloudBackupCancelBtn').onclick = function() {
+                document.getElementById('cloudBackupPrompt').style.display = 'none';
+                cloudBackupPending = false;
+                setTimeout(() => { window.close(); }, 300);
+            };
         });
 
         // ==================== PWA Service Worker ====================
@@ -6406,6 +7084,278 @@
         window.addEventListener('offline', () => {
             showNotification('لا يوجد اتصال بالإنترنت. التطبيق يعمل بوضع عدم الاتصال.', 'warning');
         });
+
+        // ==================== دوال التصدير والصيانة الجديدة ====================
+        
+        // تصدير البيانات بصيغة PDF
+        function exportDataAsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                // إضافة الخط العربي
+                doc.setFont('Arial');
+                doc.setLanguage('ar');
+                
+                // العنوان
+                doc.setFontSize(20);
+                doc.text('نسخة احتياطية من البيانات', 105, 20, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text(`التاريخ: ${new Date().toLocaleDateString('ar-IQ')}`, 105, 30, { align: 'center' });
+
+                let yPosition = 40;
+
+                // المنتجات
+                const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+                doc.setFontSize(16);
+                doc.text(`المنتجات (${products.length})`, 20, yPosition);
+                yPosition += 10;
+
+                // الفواتير
+                const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+                doc.setFontSize(16);
+                doc.text(`الفواتير (${invoices.length})`, 20, yPosition);
+                yPosition += 10;
+
+                // المصاريف
+                const expenses = LocalDB.get(LocalDB.KEYS.EXPENSES) || [];
+                doc.setFontSize(16);
+                doc.text(`المصاريف (${expenses.length})`, 20, yPosition);
+                yPosition += 10;
+
+                // الموظفين
+                const employees = LocalDB.get(LocalDB.KEYS.EMPLOYEES) || [];
+                doc.setFontSize(16);
+                doc.text(`الموظفين (${employees.length})`, 20, yPosition);
+                yPosition += 10;
+
+                // المستخدمين
+                const users = LocalDB.get(LocalDB.KEYS.USERS) || [];
+                doc.setFontSize(16);
+                doc.text(`المستخدمين (${users.length})`, 20, yPosition);
+
+                doc.save(`restaurant_backup_${new Date().getTime()}.pdf`);
+                showNotification('تم تصدير البيانات بصيغة PDF بنجاح', 'success');
+            } catch (error) {
+                console.error('Error exporting PDF:', error);
+                showNotification('حدث خطأ أثناء التصدير: ' + error.message, 'error');
+            }
+        }
+
+        // تصدير البيانات بصيغة Excel
+        function exportDataAsExcel() {
+            try {
+                const wb = XLSX.utils.book_new();
+
+                // المنتجات
+                const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+                const productsData = products.map(p => ({
+                    'الاسم': p.name,
+                    'التصنيف': p.category,
+                    'التكلفة': p.cost || 0,
+                    'السعر': p.price,
+                    'الربح': p.price - (p.cost || 0),
+                    'الوصف': p.description || ''
+                }));
+                const productsWS = XLSX.utils.json_to_sheet(productsData);
+                XLSX.utils.book_append_sheet(wb, productsWS, 'المنتجات');
+
+                // الفواتير
+                const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+                const invoicesData = invoices.map(inv => ({
+                    'رقم الفاتورة': inv.id,
+                    'التاريخ': inv.date,
+                    'الوقت': inv.time || '',
+                    'الإجمالي': inv.total,
+                    'التكلفة': inv.cost || 0,
+                    'الربح': inv.profit || 0,
+                    'المستخدم': inv.username || ''
+                }));
+                const invoicesWS = XLSX.utils.json_to_sheet(invoicesData);
+                XLSX.utils.book_append_sheet(wb, invoicesWS, 'الفواتير');
+
+                // المصاريف
+                const expenses = LocalDB.get(LocalDB.KEYS.EXPENSES) || [];
+                const expensesData = expenses.map(exp => ({
+                    'العنوان': exp.title,
+                    'المبلغ': exp.amount,
+                    'المدفوع': exp.paid || 0,
+                    'المتبقي': exp.amount - (exp.paid || 0),
+                    'التاريخ': exp.date,
+                    'الوصف': exp.description || ''
+                }));
+                const expensesWS = XLSX.utils.json_to_sheet(expensesData);
+                XLSX.utils.book_append_sheet(wb, expensesWS, 'المصاريف');
+
+                // الموظفين
+                const employees = LocalDB.get(LocalDB.KEYS.EMPLOYEES) || [];
+                const employeesData = employees.map(emp => ({
+                    'الاسم': emp.name,
+                    'المنصب': emp.position || '',
+                    'الراتب': emp.salary || 0,
+                    'الهاتف': emp.phone || '',
+                    'العنوان': emp.address || ''
+                }));
+                const employeesWS = XLSX.utils.json_to_sheet(employeesData);
+                XLSX.utils.book_append_sheet(wb, employeesWS, 'الموظفين');
+
+                // المستخدمين
+                const users = LocalDB.get(LocalDB.KEYS.USERS) || [];
+                const usersData = users.map(user => ({
+                    'اسم المستخدم': user.username,
+                    'الاسم الكامل': user.fullName || '',
+                    'الدور': user.role || 'user',
+                    'تاريخ الإنشاء': user.createdAt || ''
+                }));
+                const usersWS = XLSX.utils.json_to_sheet(usersData);
+                XLSX.utils.book_append_sheet(wb, usersWS, 'المستخدمين');
+
+                XLSX.writeFile(wb, `restaurant_backup_${new Date().getTime()}.xlsx`);
+                showNotification('تم تصدير البيانات بصيغة Excel بنجاح', 'success');
+            } catch (error) {
+                console.error('Error exporting Excel:', error);
+                showNotification('حدث خطأ أثناء التصدير: ' + error.message, 'error');
+            }
+        }
+
+        // مسح جميع البيانات
+        function clearAllData() {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟\n\nسيتم حذف:\n- جميع المنتجات\n- جميع الفواتير\n- جميع المصاريف\n- جميع الموظفين\n\nلن يتم حذف:\n- المستخدمين\n- الإعدادات\n- بيانات الاشتراك')) {
+                if (confirm('هذا الإجراء لا يمكن التراجع عنه!\n\nهل أنت متأكد تماماً؟')) {
+                    try {
+                        // حذف البيانات
+                        LocalDB.save(LocalDB.KEYS.PRODUCTS, []);
+                        LocalDB.save(LocalDB.KEYS.CATEGORIES, []);
+                        LocalDB.save(LocalDB.KEYS.INVOICES, []);
+                        LocalDB.save(LocalDB.KEYS.EXPENSES, []);
+                        LocalDB.save(LocalDB.KEYS.EMPLOYEES, []);
+                        
+                        showNotification('تم مسح جميع البيانات بنجاح', 'success');
+                        
+                        // إعادة تحميل الصفحة
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } catch (error) {
+                        console.error('Error clearing data:', error);
+                        showNotification('حدث خطأ أثناء مسح البيانات: ' + error.message, 'error');
+                    }
+                }
+            }
+        }
+
+        // إعادة ضبط المصنع
+        function factoryReset() {
+            if (confirm('⚠️ تحذير: إعادة ضبط المصنع ⚠️\n\nسيتم حذف جميع البيانات والإعدادات بالكامل:\n\n- جميع المنتجات والتصنيفات\n- جميع الفواتير والمصاريف\n- جميع الموظفين والمستخدمين\n- جميع الإعدادات\n- بيانات الاشتراك (ستحتاج إلى إعادة التسجيل)\n\nسيعود التطبيق لحالته الأولية كأنك قمت بتثبيته للتو.\n\nهل أنت متأكد تماماً؟')) {
+                if (confirm('⛔ تأكيد نهائي ⛔\n\nهذا الإجراء لا يمكن التراجع عنه بأي طريقة!\n\nاكتب "نعم" في الرسالة التالية للمتابعة.')) {
+                    const confirmation = prompt('اكتب "نعم" للتأكيد:');
+                    if (confirmation === 'نعم') {
+                        try {
+                            // حذف جميع البيانات من localStorage
+                            localStorage.clear();
+                            
+                            // حذف بيانات Firebase إذا كانت متصلة
+                            if (currentUserId && firebaseDB) {
+                                const userRef = firebaseDB.ref('restaurants/' + currentUserId);
+                                userRef.remove().then(() => {
+                                    console.log('Firebase data removed');
+                                }).catch(err => {
+                                    console.error('Error removing Firebase data:', err);
+                                });
+                            }
+                            
+                            showNotification('تم إعادة ضبط المصنع بنجاح. سيتم إعادة تحميل التطبيق...', 'success');
+                            
+                            // إعادة تحميل الصفحة بعد 2 ثانية
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } catch (error) {
+                            console.error('Error resetting:', error);
+                            showNotification('حدث خطأ أثناء إعادة الضبط: ' + error.message, 'error');
+                        }
+                    } else {
+                        showNotification('تم إلغاء العملية', 'info');
+                    }
+                }
+            }
+        }
+
+        // تصدير قسم معين بصيغة JSON
+        function exportSectionAsJSON(sectionName, dataKey) {
+            try {
+                const data = LocalDB.get(dataKey) || [];
+                const exportData = {
+                    section: sectionName,
+                    data: data,
+                    exportDate: new Date().toISOString(),
+                    totalRecords: data.length
+                };
+
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${sectionName}_${new Date().getTime()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                showNotification(`تم تصدير ${sectionName} بنجاح (${data.length} سجل)`, 'success');
+            } catch (error) {
+                console.error('Error exporting section:', error);
+                showNotification('حدث خطأ أثناء التصدير: ' + error.message, 'error');
+            }
+        }
+
+        // تحديث دالة loadAccountInfo لعرض الإحصائيات
+        const originalLoadAccountInfo = loadAccountInfo;
+        loadAccountInfo = function() {
+            if (originalLoadAccountInfo) {
+                originalLoadAccountInfo();
+            }
+            
+            // تحديث الإحصائيات في صفحة حسابي
+            updateQuickStats();
+        };
+
+        // دالة تحديث الإحصائيات السريعة
+        function updateQuickStats() {
+            try {
+                const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+                const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+                const users = LocalDB.get(LocalDB.KEYS.USERS) || [];
+                
+                // تحديث جميع عناصر الإحصائيات
+                const totalProductsElements = document.querySelectorAll('#totalProducts');
+                const totalInvoicesElements = document.querySelectorAll('#totalInvoices');
+                const totalUsersElements = document.querySelectorAll('#totalUsers');
+                
+                totalProductsElements.forEach(el => {
+                    if (el) el.textContent = products.length;
+                });
+                
+                totalInvoicesElements.forEach(el => {
+                    if (el) el.textContent = invoices.length;
+                });
+                
+                totalUsersElements.forEach(el => {
+                    if (el) el.textContent = users.length;
+                });
+
+                console.log('Stats updated:', {
+                    products: products.length,
+                    invoices: invoices.length,
+                    users: users.length
+                });
+            } catch (error) {
+                console.error('Error updating stats:', error);
+            }
+        }
     </script>
 </body>
 </html>

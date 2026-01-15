@@ -13,9 +13,10 @@ function createWindow() {
         frame: false, // استخدام إطار مخصص
         titleBarStyle: 'hidden',
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true,
+            enableRemoteModule: false
         },
         icon: path.join(__dirname, 'icon.png'),
         backgroundColor: '#f5f7fa'
