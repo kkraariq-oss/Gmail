@@ -117,7 +117,7 @@ function printThermal(invoiceData) {
             deviceName: '', // اسم الطابعة - فارغ للطابعة الافتراضية
             pageSize: {
                 width: 80000, // 80mm
-                height: 0 // ارتفاع تلقائي
+                height: 120000 // 120mm (أو حسب طول الفاتورة)
             },
             margins: {
                 marginType: 'none'
@@ -146,69 +146,103 @@ function generateThermalHTML(invoice) {
             size: 80mm auto;
         }
         body {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            margin: 10px;
-            padding: 0;
+            font-family: 'Tajawal', 'Cairo', 'Arial', sans-serif;
+            font-size: 13px;
+            margin: 0;
+            padding: 0 0 10px 0;
             width: 80mm;
+            background: #fff;
         }
         .header {
             text-align: center;
             border-bottom: 2px dashed #000;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding: 10px 0 8px 0;
+            margin-bottom: 8px;
+        }
+        .header .logo {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 5px auto;
         }
         .header h2 {
-            margin: 5px 0;
-            font-size: 18px;
+            margin: 2px 0 3px 0;
+            font-size: 19px;
+            font-weight: bold;
+        }
+        .header .address, .header .phone {
+            font-size: 12px;
+            color: #444;
         }
         .info {
-            margin-bottom: 10px;
-            font-size: 11px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .info span {
+            display: inline-block;
+            min-width: 90px;
         }
         .items {
             border-top: 1px dashed #000;
             border-bottom: 1px dashed #000;
-            padding: 10px 0;
+            padding: 8px 0 6px 0;
         }
         .item {
             display: flex;
             justify-content: space-between;
-            margin: 5px 0;
+            margin: 3px 0;
+            font-size: 13px;
+        }
+        .item .qty {
+            color: #888;
+            font-size: 12px;
         }
         .total {
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin: 15px 0;
+            margin: 12px 0 6px 0;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            background: #f7f7f7;
+            padding: 6px 0;
+            border: 1px solid #eee;
         }
         .footer {
             text-align: center;
             border-top: 2px dashed #000;
-            padding-top: 10px;
-            margin-top: 10px;
+            padding-top: 8px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #444;
+        }
+        .footer .brand {
+            margin-top: 8px;
             font-size: 10px;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="header">
+        <!-- شعار (يمكنك وضع صورة شعار هنا إذا أردت) -->
+        <!--<img src="${invoice.logo || ''}" class="logo" alt="logo">-->
         <h2>${invoice.restaurantName || 'مطعم Cash Pro'}</h2>
-        <div>${invoice.address || 'العنوان'}</div>
-        <div>${invoice.phone || 'رقم الهاتف'}</div>
+        <div class="address">${invoice.address || ''}</div>
+        <div class="phone">${invoice.phone || ''}</div>
     </div>
 
     <div class="info">
-        <div>رقم الفاتورة: ${invoice.id}</div>
-        <div>التاريخ: ${invoice.date}</div>
-        <div>الوقت: ${invoice.time}</div>
-        <div>الكاشير: ${invoice.cashier || 'admin'}</div>
+        <span>فاتورة: ${invoice.id}</span>
+        <span>التاريخ: ${invoice.date}</span>
+        <span>الوقت: ${invoice.time}</span>
+        <span>الكاشير: ${invoice.cashier || 'admin'}</span>
     </div>
 
     <div class="items">
         ${invoice.items.map(item => `
             <div class="item">
-                <span>${item.name} × ${item.quantity}</span>
+                <span>${item.name} <span class="qty">×${item.quantity}</span></span>
                 <span>${(item.price * item.quantity).toLocaleString('ar-IQ')} د.ع</span>
             </div>
         `).join('')}
@@ -219,10 +253,8 @@ function generateThermalHTML(invoice) {
     </div>
 
     <div class="footer">
-        <div>شكراً لزيارتكم</div>
-        <div>نتمنى لكم يوماً سعيداً</div>
-        <div style="margin-top: 10px;">Powered by Cash Pro</div>
-        <div>Digital Creativity Company</div>
+        <div>${invoice.footerText || 'شكراً لزيارتكم - نتمنى لكم يوماً سعيداً'}</div>
+        <div class="brand">Powered by Cash Pro | Digital Creativity Company</div>
     </div>
 </body>
 </html>

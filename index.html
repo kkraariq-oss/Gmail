@@ -171,6 +171,24 @@
             to { transform: rotate(360deg); }
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .report-card {
+            transition: all 0.3s ease;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         .app-title {
             display: flex;
             flex-direction: column;
@@ -2305,32 +2323,156 @@
 
             <!-- صفحة التقارير -->
             <div class="page" id="reportsPage">
+
                 <div class="page-header">
                     <h2>
                         <i class="fas fa-chart-line"></i>
-                        التقارير والإحصائيات
+                        التقارير والإحصائيات الشاملة
                     </h2>
-                    <button class="btn btn-secondary" onclick="showPage('homePage')">
-                        <i class="fas fa-arrow-right"></i>
-                        عودة
-                    </button>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-bar"></i> نظرة عامة</h3>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="salesChart" style="max-height: 400px;"></canvas>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="printAllReports()">
+                            <i class="fas fa-print"></i>
+                            طباعة جميع التقارير
+                        </button>
+                        <button class="btn btn-secondary" onclick="showPage('homePage')">
+                            <i class="fas fa-arrow-right"></i>
+                            عودة
+                        </button>
                     </div>
                 </div>
 
-                <div class="card mt-20">
-                    <div class="card-header">
-                        <h3><i class="fas fa-pie-chart"></i> توزيع المبيعات</h3>
-                    </div>
+                <!-- معلومات عامة -->
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 20px;">
                     <div class="card-body">
-                        <canvas id="profitChart" style="max-height: 400px;"></canvas>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center;">
+                            <div>
+                                <div style="font-size: 32px; font-weight: 700;" id="totalReportsCount">6</div>
+                                <div style="font-size: 14px; opacity: 0.9;">عدد التقارير</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; font-weight: 700;" id="totalInvoicesReport">0</div>
+                                <div style="font-size: 14px; opacity: 0.9;">إجمالي الفواتير</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; font-weight: 700;" id="totalProductsReport">0</div>
+                                <div style="font-size: 14px; opacity: 0.9;">إجمالي المنتجات</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 32px; font-weight: 700;" id="totalExpensesReport">0</div>
+                                <div style="font-size: 14px; opacity: 0.9;">إجمالي المصاريف</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3><i class="fas fa-file-alt"></i> اختر التقرير للعرض والطباعة</h3>
+                    <p>انقر على أي تقرير لعرض التفاصيل الكاملة</p>
+                </div>
+
+                <!-- شبكة التقارير -->
+                <div class="reports-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                    <!-- تقرير الفواتير -->
+                    <div class="report-card" onclick="showReportDetails('invoices')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #667eea; margin-bottom: 15px;">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير الفواتير</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">جميع الفواتير والمبيعات بالتفصيل</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('invoices');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تقرير المنتجات -->
+                    <div class="report-card" onclick="showReportDetails('products')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #27ae60; margin-bottom: 15px;">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير المنتجات</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">تفاصيل المنتجات والتصنيفات</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('products');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تقرير المبيعات -->
+                    <div class="report-card" onclick="showReportDetails('sales')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #f39c12; margin-bottom: 15px;">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير المبيعات</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">مبيعات يومية وشهرية مفصلة</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('sales');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تقرير المصاريف -->
+                    <div class="report-card" onclick="showReportDetails('expenses')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #e74c3c; margin-bottom: 15px;">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير المصاريف</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">جميع المصاريف والنفقات</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('expenses');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تقرير الموظفين -->
+                    <div class="report-card" onclick="showReportDetails('employees')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #3498db; margin-bottom: 15px;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير الموظفين</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">بيانات الموظفين والرواتب</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('employees');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- تقرير المستخدمين -->
+                    <div class="report-card" onclick="showReportDetails('users')" style="cursor: pointer; background: var(--bg-secondary); border-radius: 16px; padding: 30px; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid var(--border-color); transition: all 0.3s ease;">
+                        <div class="report-icon" style="font-size: 48px; color: #9b59b6; margin-bottom: 15px;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3 style="margin: 10px 0; color: var(--text-primary); font-size: 18px;">تقرير المستخدمين</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin: 10px 0;">حسابات وصلاحيات المستخدمين</p>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); printSingleReport('users');">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- منطقة عرض التفاصيل -->
+                <div id="reportDetailsContainer" class="card hidden" style="margin-top: 30px; animation: fadeIn 0.3s ease;">
+                    <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 id="reportDetailsTitle"><i class="fas fa-file-alt"></i> تفاصيل التقرير</h3>
+                        <button class="btn" style="background: rgba(255,255,255,0.2); color: white;" onclick="hideReportDetails()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="reportDetailsContent" style="max-height: 600px; overflow-y: auto;">
+                        <!-- سيتم إضافة التفاصيل هنا ديناميكياً -->
+                    </div>
+                    <div class="card-footer" style="background: var(--bg-tertiary); padding: 20px; text-align: center;">
+                        <button class="btn btn-primary" id="printCurrentReportBtn" onclick="printCurrentReport()">
+                            <i class="fas fa-print"></i>
+                            طباعة هذا التقرير
+                        </button>
                     </div>
                 </div>
             </div>
@@ -4739,7 +4881,6 @@
         function loadPOSProducts(categoryFilter = 'all') {
             const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
             const container = document.getElementById('posProductsGrid');
-            
             let filteredProducts = categoryFilter === 'all' 
                 ? products 
                 : products.filter(p => p.category == categoryFilter);
@@ -4749,11 +4890,19 @@
                 return;
             }
 
+            // CSS للعرض الطولي
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(140px, 1fr))';
+            container.style.gap = '15px';
+            container.style.padding = '15px';
+
             container.innerHTML = filteredProducts.map(product => `
-                <div class="product-item" onclick='showAddToCartModal(${JSON.stringify(product)})'>
-                    <img src="${product.image || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23ddd\' width=\'100\' height=\'100\'/%3E%3Ctext fill=\'%23999\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\'%3Eصورة%3C/text%3E%3C/svg%3E'}" class="product-image" alt="${product.name}">
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">${formatNumber(product.price)} د.ع</div>
+                <div class="product-card-vertical" style="background: var(--bg-secondary); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md); cursor: pointer; transition: all 0.3s; border: 2px solid transparent; height: 220px; display: flex; flex-direction: column;" onclick='showAddToCartModal(${JSON.stringify(product)})'>
+                    <img src="${product.image || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'140\'%3E%3Crect fill=\'%23f0f0f0\' width=\'200\' height=\'140\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'60\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3E🍽️%3C/text%3E%3C/svg%3E'}" alt="${product.name}" style="width:100%;height:140px;object-fit:cover;background:var(--bg-tertiary);">
+                    <div class="product-info" style="padding:10px;flex:1;display:flex;flex-direction:column;justify-content:space-between;">
+                        <div class="product-name" title="${product.name}" style="font-weight:600;font-size:13px;color:var(--text-primary);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${product.name}</div>
+                        <div class="product-price" style="font-size:14px;font-weight:bold;color:var(--primary-color);">${formatNumber(product.price)} د.ع</div>
+                    </div>
                 </div>
             `).join('');
         }
@@ -4962,14 +5111,15 @@
             }
 
             const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
-            
             let total = 0;
             let totalCost = 0;
-            
             currentCart.forEach(item => {
                 total += item.price * item.quantity;
                 totalCost += (item.cost || 0) * item.quantity;
             });
+
+            // جلب إعدادات الفاتورة من الإعدادات
+            const settings = LocalDB.get(LocalDB.KEYS.SETTINGS) || {};
 
             const invoice = {
                 id: Date.now(),
@@ -4977,13 +5127,22 @@
                 total: total,
                 cost: totalCost,
                 profit: total - totalCost,
-                date: new Date().toISOString().split('T')[0],
+                date: new Date().toLocaleDateString('ar-IQ'),
                 time: new Date().toLocaleTimeString('ar-IQ'),
-                addedBy: currentUser ? currentUser.username : 'admin'
+                cashier: currentUser ? (currentUser.fullName || currentUser.username) : 'admin',
+                restaurantName: settings.restaurantName || 'مطعم Cash Pro',
+                address: settings.restaurantAddress || '',
+                phone: settings.restaurantPhone || '',
+                footerText: settings.footerText || 'شكراً لزيارتكم - نتمنى لكم يوماً سعيداً'
             };
 
             invoices.push(invoice);
             LocalDB.save(LocalDB.KEYS.INVOICES, invoices);
+
+            // الطباعة الحرارية إذا كان Electron متوفر
+            if (window.electronAPI && window.electronAPI.printThermal) {
+                window.electronAPI.printThermal(invoice);
+            }
 
             currentCart = [];
             LocalDB.save(LocalDB.KEYS.CART, currentCart);
@@ -5670,48 +5829,128 @@
 
         // التقارير والرسوم البيانية
         function loadReports() {
+            const container = document.getElementById('reportsContainer');
+            if (!container) return;
+
+            // جلب البيانات
             const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+            const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
             const expenses = LocalDB.get(LocalDB.KEYS.EXPENSES) || [];
+            const employees = LocalDB.get(LocalDB.KEYS.EMPLOYEES) || [];
 
-            // رسم بياني للمبيعات
-            const salesCtx = document.getElementById('salesChart');
-            if (salesCtx) {
-                new Chart(salesCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
-                        datasets: [{
-                            label: 'المبيعات',
-                            data: [12000, 19000, 15000, 25000, 22000, 30000],
-                            borderColor: 'rgb(124, 58, 237)',
-                            tension: 0.1
-                        }]
-                    }
-                });
-            }
+            // إحصائيات الفواتير
+            let totalSales = 0, totalProfit = 0, totalCost = 0, totalItems = 0;
+            invoices.forEach(inv => {
+                totalSales += inv.total || 0;
+                totalProfit += inv.profit || (inv.total - (inv.cost || 0));
+                totalCost += inv.cost || 0;
+                totalItems += (inv.items || []).reduce((sum, item) => sum + (item.quantity || 0), 0);
+            });
 
-            // رسم بياني دائري للأرباح
-            const profitCtx = document.getElementById('profitChart');
-            if (profitCtx) {
-                const totalSales = invoices.reduce((sum, inv) => sum + inv.total, 0);
-                const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-                const profit = totalSales - totalExpenses;
+            // إحصائيات المنتجات
+            let totalStockValue = 0;
+            products.forEach(p => {
+                totalStockValue += (p.price * (p.stock || 0));
+            });
 
-                new Chart(profitCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['المبيعات', 'المصاريف', 'الربح'],
-                        datasets: [{
-                            data: [totalSales, totalExpenses, profit],
-                            backgroundColor: [
-                                'rgb(124, 58, 237)',
-                                'rgb(231, 76, 60)',
-                                'rgb(39, 174, 96)'
-                            ]
-                        }]
-                    }
-                });
-            }
+            // إحصائيات المصاريف
+            let totalExpenses = 0;
+            expenses.forEach(e => { totalExpenses += e.amount || 0; });
+
+            // إحصائيات الرواتب
+            let totalSalaries = 0;
+            employees.forEach(e => { totalSalaries += e.salary || 0; });
+
+            // بناء التقرير النصي
+            let html = `
+            <div class="detailed-report">
+                <div class="report-header">
+                    <h2>📊 التقارير الشاملة</h2>
+                    <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-IQ')}</p>
+                </div>
+                <div class="report-summary">
+                    <div class="summary-card"><h3>عدد الفواتير</h3><p class="big-number">${invoices.length}</p></div>
+                    <div class="summary-card"><h3>إجمالي المبيعات</h3><p class="big-number">${totalSales.toLocaleString('ar-IQ')} د.ع</p></div>
+                    <div class="summary-card"><h3>إجمالي الأرباح</h3><p class="big-number success">${totalProfit.toLocaleString('ar-IQ')} د.ع</p></div>
+                    <div class="summary-card"><h3>عدد المنتجات</h3><p class="big-number">${products.length}</p></div>
+                    <div class="summary-card"><h3>قيمة المخزون</h3><p class="big-number">${totalStockValue.toLocaleString('ar-IQ')} د.ع</p></div>
+                    <div class="summary-card"><h3>إجمالي المصاريف</h3><p class="big-number danger">${totalExpenses.toLocaleString('ar-IQ')} د.ع</p></div>
+                    <div class="summary-card"><h3>إجمالي الرواتب</h3><p class="big-number">${totalSalaries.toLocaleString('ar-IQ')} د.ع</p></div>
+                </div>
+
+                <h3 style="margin-top:30px">تفاصيل الفواتير</h3>
+                <div class="report-table-container">
+                    <table class="report-table">
+                        <thead><tr><th>رقم</th><th>التاريخ</th><th>الوقت</th><th>عدد المنتجات</th><th>الإجمالي</th><th>الربح</th></tr></thead>
+                        <tbody>
+                        ${invoices.slice().reverse().map(inv => `
+                            <tr>
+                                <td>${inv.id}</td>
+                                <td>${inv.date}</td>
+                                <td>${inv.time || '-'}</td>
+                                <td>${(inv.items||[]).reduce((s,i)=>s+(i.quantity||0),0)}</td>
+                                <td>${(inv.total||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${(inv.profit||0).toLocaleString('ar-IQ')} د.ع</td>
+                            </tr>
+                        `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin-top:30px">تفاصيل المنتجات</h3>
+                <div class="report-table-container">
+                    <table class="report-table">
+                        <thead><tr><th>الاسم</th><th>المخزون</th><th>السعر</th><th>التكلفة</th></tr></thead>
+                        <tbody>
+                        ${products.map(p => `
+                            <tr>
+                                <td>${p.name}</td>
+                                <td>${p.stock || 0}</td>
+                                <td>${(p.price||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${(p.cost||0).toLocaleString('ar-IQ')} د.ع</td>
+                            </tr>
+                        `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin-top:30px">تفاصيل المصاريف</h3>
+                <div class="report-table-container">
+                    <table class="report-table">
+                        <thead><tr><th>العنوان</th><th>المبلغ</th><th>المدفوع</th><th>المتبقي</th><th>التاريخ</th></tr></thead>
+                        <tbody>
+                        ${expenses.map(e => `
+                            <tr>
+                                <td>${e.title}</td>
+                                <td>${(e.amount||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${(e.paid||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${(e.remaining||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${e.date||'-'}</td>
+                            </tr>
+                        `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin-top:30px">تفاصيل الرواتب</h3>
+                <div class="report-table-container">
+                    <table class="report-table">
+                        <thead><tr><th>الاسم</th><th>المنصب</th><th>الراتب</th><th>تاريخ التعيين</th></tr></thead>
+                        <tbody>
+                        ${employees.map(emp => `
+                            <tr>
+                                <td>${emp.name}</td>
+                                <td>${emp.position||'-'}</td>
+                                <td>${(emp.salary||0).toLocaleString('ar-IQ')} د.ع</td>
+                                <td>${emp.hireDate||'-'}</td>
+                            </tr>
+                        `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            `;
+            container.innerHTML = html;
         }
 
         // الإعدادات
@@ -7356,6 +7595,770 @@
                 console.error('Error updating stats:', error);
             }
         }
+
+        // ===================== نظام التقارير المتقدم =====================
+        
+        let currentReportType = null;
+
+        // تحديث إحصائيات التقارير
+        function updateReportsStats() {
+            try {
+                const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+                const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+                const expenses = LocalDB.get(LocalDB.KEYS.EXPENSES) || [];
+                
+                const totalInvoicesEl = document.getElementById('totalInvoicesReport');
+                const totalProductsEl = document.getElementById('totalProductsReport');
+                const totalExpensesEl = document.getElementById('totalExpensesReport');
+                
+                if (totalInvoicesEl) totalInvoicesEl.textContent = invoices.length;
+                if (totalProductsEl) totalProductsEl.textContent = products.length;
+                if (totalExpensesEl) totalExpensesEl.textContent = expenses.length;
+            } catch (error) {
+                console.error('Error updating reports stats:', error);
+            }
+        }
+
+        // عرض تفاصيل التقرير
+        function showReportDetails(reportType) {
+            currentReportType = reportType;
+            const container = document.getElementById('reportDetailsContainer');
+            const content = document.getElementById('reportDetailsContent');
+            const title = document.getElementById('reportDetailsTitle');
+            
+            if (!container || !content || !title) return;
+            
+            let reportHTML = '';
+            let reportTitle = '';
+            
+            switch(reportType) {
+                case 'invoices':
+                    reportTitle = 'تقرير الفواتير الشامل';
+                    reportHTML = generateInvoicesReportHTML();
+                    break;
+                case 'products':
+                    reportTitle = 'تقرير المنتجات';
+                    reportHTML = generateProductsReportHTML();
+                    break;
+                case 'sales':
+                    reportTitle = 'تقرير المبيعات';
+                    reportHTML = generateSalesReportHTML();
+                    break;
+                case 'expenses':
+                    reportTitle = 'تقرير المصاريف';
+                    reportHTML = generateExpensesReportHTML();
+                    break;
+                case 'employees':
+                    reportTitle = 'تقرير الموظفين';
+                    reportHTML = generateEmployeesReportHTML();
+                    break;
+                case 'users':
+                    reportTitle = 'تقرير المستخدمين';
+                    reportHTML = generateUsersReportHTML();
+                    break;
+            }
+            
+            title.innerHTML = `<i class="fas fa-file-alt"></i> ${reportTitle}`;
+            content.innerHTML = reportHTML;
+            container.classList.remove('hidden');
+            
+            // التمرير إلى التفاصيل
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // إخفاء تفاصيل التقرير
+        function hideReportDetails() {
+            const container = document.getElementById('reportDetailsContainer');
+            if (container) {
+                container.classList.add('hidden');
+            }
+            currentReportType = null;
+        }
+
+        // توليد HTML لتقرير الفواتير
+        function generateInvoicesReportHTML() {
+            const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+            
+            if (invoices.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا توجد فواتير لعرضها</p></div>';
+            }
+            
+            let totalSales = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات عامة</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد الفواتير</div>
+                            <div style="font-size: 28px; font-weight: 700;">${invoices.length}</div>
+                        </div>
+                        <div id="totalSalesBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي المبيعات</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                        <div id="totalProfitBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي الربح</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">رقم الفاتورة</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التاريخ</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الوقت</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المبلغ الإجمالي</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التكلفة</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الربح</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المستخدم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            invoices.forEach(invoice => {
+                const total = parseFloat(invoice.total) || 0;
+                const cost = parseFloat(invoice.cost) || 0;
+                const profit = parseFloat(invoice.profit) || (total - cost);
+                
+                totalSales += total;
+                totalCost += cost;
+                totalProfit += profit;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; color: var(--primary-color); font-weight: 600;">#${invoice.id}</td>
+                        <td style="padding: 12px;">${invoice.date || 'غير محدد'}</td>
+                        <td style="padding: 12px;">${invoice.time || 'غير محدد'}</td>
+                        <td style="padding: 12px; font-weight: 600; color: var(--success-color);">${formatNumber(total)} د.ع</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${formatNumber(cost)} د.ع</td>
+                        <td style="padding: 12px; font-weight: 600; color: var(--accent-color);">${formatNumber(profit)} د.ع</td>
+                        <td style="padding: 12px;">${invoice.username || 'غير محدد'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: var(--bg-tertiary); font-weight: 700;">
+                                <td colspan="3" style="padding: 15px; text-align: right;">الإجمالي</td>
+                                <td style="padding: 15px; color: var(--success-color);">${formatNumber(totalSales)} د.ع</td>
+                                <td style="padding: 15px; color: var(--text-secondary);">${formatNumber(totalCost)} د.ع</td>
+                                <td style="padding: 15px; color: var(--accent-color);">${formatNumber(totalProfit)} د.ع</td>
+                                <td style="padding: 15px;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            
+            // تحديث الإحصائيات
+            setTimeout(() => {
+                const totalSalesBox = document.getElementById('totalSalesBox');
+                const totalProfitBox = document.getElementById('totalProfitBox');
+                if (totalSalesBox) totalSalesBox.querySelector('div:last-child').textContent = formatNumber(totalSales) + ' د.ع';
+                if (totalProfitBox) totalProfitBox.querySelector('div:last-child').textContent = formatNumber(totalProfit) + ' د.ع';
+            }, 100);
+            
+            return html;
+        }
+
+        // توليد HTML لتقرير المنتجات
+        function generateProductsReportHTML() {
+            const products = LocalDB.get(LocalDB.KEYS.PRODUCTS) || [];
+            const categories = LocalDB.get(LocalDB.KEYS.CATEGORIES) || [];
+            
+            if (products.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا توجد منتجات لعرضها</p></div>';
+            }
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات عامة</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد المنتجات</div>
+                            <div style="font-size: 28px; font-weight: 700;">${products.length}</div>
+                        </div>
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد التصنيفات</div>
+                            <div style="font-size: 28px; font-weight: 700;">${categories.length}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المنتج</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التصنيف</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التكلفة</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">سعر البيع</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">هامش الربح</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الوصف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            products.forEach(product => {
+                const cost = parseFloat(product.cost) || 0;
+                const price = parseFloat(product.price) || 0;
+                const margin = price - cost;
+                const marginPercent = cost > 0 ? ((margin / cost) * 100).toFixed(1) : 0;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600;">${product.name || 'غير محدد'}</td>
+                        <td style="padding: 12px;">${product.category || 'غير مصنف'}</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${formatNumber(cost)} د.ع</td>
+                        <td style="padding: 12px; color: var(--success-color); font-weight: 600;">${formatNumber(price)} د.ع</td>
+                        <td style="padding: 12px; color: var(--accent-color);">${formatNumber(margin)} د.ع (${marginPercent}%)</td>
+                        <td style="padding: 12px; color: var(--text-secondary); font-size: 13px;">${product.description || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // توليد HTML لتقرير المبيعات
+        function generateSalesReportHTML() {
+            const invoices = LocalDB.get(LocalDB.KEYS.INVOICES) || [];
+            
+            if (invoices.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا توجد مبيعات لعرضها</p></div>';
+            }
+            
+            // تجميع المبيعات حسب التاريخ
+            const salesByDate = {};
+            let totalSales = 0;
+            let totalProfit = 0;
+            
+            invoices.forEach(invoice => {
+                const date = invoice.date || 'غير محدد';
+                const total = parseFloat(invoice.total) || 0;
+                const profit = parseFloat(invoice.profit) || 0;
+                
+                if (!salesByDate[date]) {
+                    salesByDate[date] = {
+                        count: 0,
+                        total: 0,
+                        profit: 0
+                    };
+                }
+                
+                salesByDate[date].count++;
+                salesByDate[date].total += total;
+                salesByDate[date].profit += profit;
+                
+                totalSales += total;
+                totalProfit += profit;
+            });
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات المبيعات</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي المبيعات</div>
+                            <div style="font-size: 28px; font-weight: 700;">${formatNumber(totalSales)} د.ع</div>
+                        </div>
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي الربح</div>
+                            <div style="font-size: 28px; font-weight: 700;">${formatNumber(totalProfit)} د.ع</div>
+                        </div>
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد الأيام</div>
+                            <div style="font-size: 28px; font-weight: 700;">${Object.keys(salesByDate).length}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التاريخ</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">عدد الفواتير</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">إجمالي المبيعات</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">إجمالي الربح</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">متوسط الفاتورة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            Object.keys(salesByDate).sort().reverse().forEach(date => {
+                const data = salesByDate[date];
+                const avgInvoice = data.total / data.count;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600;">${date}</td>
+                        <td style="padding: 12px; color: var(--primary-color);">${data.count} فاتورة</td>
+                        <td style="padding: 12px; color: var(--success-color); font-weight: 600;">${formatNumber(data.total)} د.ع</td>
+                        <td style="padding: 12px; color: var(--accent-color);">${formatNumber(data.profit)} د.ع</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${formatNumber(avgInvoice)} د.ع</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // توليد HTML لتقرير المصاريف
+        function generateExpensesReportHTML() {
+            const expenses = LocalDB.get(LocalDB.KEYS.EXPENSES) || [];
+            
+            if (expenses.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا توجد مصاريف لعرضها</p></div>';
+            }
+            
+            let totalExpenses = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات المصاريف</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد المصاريف</div>
+                            <div style="font-size: 28px; font-weight: 700;">${expenses.length}</div>
+                        </div>
+                        <div id="totalExpensesBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي المصاريف</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                        <div id="totalPaidBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">المدفوع</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                        <div id="totalRemainingBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">المتبقي</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">العنوان</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">التاريخ</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المبلغ الكلي</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المدفوع</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المتبقي</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الحالة</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الوصف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            expenses.forEach(expense => {
+                const amount = parseFloat(expense.amount) || 0;
+                const paid = parseFloat(expense.paid) || 0;
+                const remaining = amount - paid;
+                const status = remaining === 0 ? 'مدفوع بالكامل' : remaining === amount ? 'غير مدفوع' : 'مدفوع جزئياً';
+                const statusColor = remaining === 0 ? 'var(--success-color)' : remaining === amount ? 'var(--danger-color)' : 'var(--warning-color)';
+                
+                totalExpenses += amount;
+                totalPaid += paid;
+                totalRemaining += remaining;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600;">${expense.title || 'غير محدد'}</td>
+                        <td style="padding: 12px;">${expense.date || 'غير محدد'}</td>
+                        <td style="padding: 12px; font-weight: 600;">${formatNumber(amount)} د.ع</td>
+                        <td style="padding: 12px; color: var(--success-color);">${formatNumber(paid)} د.ع</td>
+                        <td style="padding: 12px; color: var(--danger-color);">${formatNumber(remaining)} د.ع</td>
+                        <td style="padding: 12px; color: ${statusColor}; font-weight: 600;">${status}</td>
+                        <td style="padding: 12px; color: var(--text-secondary); font-size: 13px;">${expense.description || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: var(--bg-tertiary); font-weight: 700;">
+                                <td colspan="2" style="padding: 15px; text-align: right;">الإجمالي</td>
+                                <td style="padding: 15px;">${formatNumber(totalExpenses)} د.ع</td>
+                                <td style="padding: 15px; color: var(--success-color);">${formatNumber(totalPaid)} د.ع</td>
+                                <td style="padding: 15px; color: var(--danger-color);">${formatNumber(totalRemaining)} د.ع</td>
+                                <td colspan="2" style="padding: 15px;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            
+            // تحديث الإحصائيات
+            setTimeout(() => {
+                const totalExpensesBox = document.getElementById('totalExpensesBox');
+                const totalPaidBox = document.getElementById('totalPaidBox');
+                const totalRemainingBox = document.getElementById('totalRemainingBox');
+                if (totalExpensesBox) totalExpensesBox.querySelector('div:last-child').textContent = formatNumber(totalExpenses) + ' د.ع';
+                if (totalPaidBox) totalPaidBox.querySelector('div:last-child').textContent = formatNumber(totalPaid) + ' د.ع';
+                if (totalRemainingBox) totalRemainingBox.querySelector('div:last-child').textContent = formatNumber(totalRemaining) + ' د.ع';
+            }, 100);
+            
+            return html;
+        }
+
+        // توليد HTML لتقرير الموظفين
+        function generateEmployeesReportHTML() {
+            const employees = LocalDB.get(LocalDB.KEYS.EMPLOYEES) || [];
+            
+            if (employees.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا يوجد موظفين لعرضهم</p></div>';
+            }
+            
+            let totalSalaries = 0;
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات الموظفين</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد الموظفين</div>
+                            <div style="font-size: 28px; font-weight: 700;">${employees.length}</div>
+                        </div>
+                        <div id="totalSalariesBox" style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">إجمالي الرواتب</div>
+                            <div style="font-size: 28px; font-weight: 700;">0 د.ع</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الاسم</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">المنصب</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الهاتف</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الراتب</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">تاريخ التعيين</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">العنوان</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            employees.forEach(employee => {
+                const salary = parseFloat(employee.salary) || 0;
+                totalSalaries += salary;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600;">${employee.name || 'غير محدد'}</td>
+                        <td style="padding: 12px; color: var(--primary-color);">${employee.position || 'غير محدد'}</td>
+                        <td style="padding: 12px; direction: ltr; text-align: right;">${employee.phone || '-'}</td>
+                        <td style="padding: 12px; color: var(--success-color); font-weight: 600;">${formatNumber(salary)} د.ع</td>
+                        <td style="padding: 12px;">${employee.hireDate || 'غير محدد'}</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${employee.address || '-'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: var(--bg-tertiary); font-weight: 700;">
+                                <td colspan="3" style="padding: 15px; text-align: right;">الإجمالي</td>
+                                <td style="padding: 15px; color: var(--success-color);">${formatNumber(totalSalaries)} د.ع</td>
+                                <td colspan="2" style="padding: 15px;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+            
+            // تحديث الإحصائيات
+            setTimeout(() => {
+                const totalSalariesBox = document.getElementById('totalSalariesBox');
+                if (totalSalariesBox) totalSalariesBox.querySelector('div:last-child').textContent = formatNumber(totalSalaries) + ' د.ع';
+            }, 100);
+            
+            return html;
+        }
+
+        // توليد HTML لتقرير المستخدمين
+        function generateUsersReportHTML() {
+            const users = LocalDB.get(LocalDB.KEYS.USERS) || [];
+            
+            if (users.length === 0) {
+                return '<div style="text-align: center; padding: 40px; color: var(--text-secondary);"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 15px; display: block;"></i><p>لا يوجد مستخدمين لعرضهم</p></div>';
+            }
+            
+            let html = `
+                <div style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 20px; font-size: 22px;"><i class="fas fa-chart-bar"></i> إحصائيات المستخدمين</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">عدد المستخدمين</div>
+                            <div style="font-size: 28px; font-weight: 700;">${users.length}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background: var(--bg-tertiary);">
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">اسم المستخدم</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الاسم الكامل</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الدور</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">تاريخ الإنشاء</th>
+                                <th style="padding: 15px; text-align: right; border-bottom: 2px solid var(--border-color);">الصلاحيات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            users.forEach(user => {
+                const role = user.role === 'admin' ? 'مدير' : 'مستخدم';
+                const roleColor = user.role === 'admin' ? 'var(--danger-color)' : 'var(--primary-color)';
+                const permissions = user.permissions && Array.isArray(user.permissions) ? user.permissions.length : 0;
+                
+                html += `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600;">${user.username || 'غير محدد'}</td>
+                        <td style="padding: 12px;">${user.fullName || '-'}</td>
+                        <td style="padding: 12px; color: ${roleColor}; font-weight: 600;">${role}</td>
+                        <td style="padding: 12px; color: var(--text-secondary);">${user.createdAt || 'غير محدد'}</td>
+                        <td style="padding: 12px; color: var(--accent-color);">${permissions} صلاحية</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // طباعة تقرير واحد
+        function printSingleReport(reportType) {
+            currentReportType = reportType;
+            printCurrentReport();
+        }
+
+        // طباعة التقرير الحالي
+        function printCurrentReport() {
+            if (!currentReportType) return;
+            
+            const settings = LocalDB.get(LocalDB.KEYS.SETTINGS) || {};
+            const restaurantName = settings.restaurantName || 'اسم المطعم';
+            const restaurantAddress = settings.restaurantAddress || 'العنوان';
+            const restaurantPhone = settings.restaurantPhone || 'رقم الهاتف';
+            
+            let reportContent = '';
+            let reportTitle = '';
+            
+            switch(currentReportType) {
+                case 'invoices':
+                    reportTitle = 'تقرير الفواتير الشامل';
+                    reportContent = generateInvoicesReportHTML();
+                    break;
+                case 'products':
+                    reportTitle = 'تقرير المنتجات';
+                    reportContent = generateProductsReportHTML();
+                    break;
+                case 'sales':
+                    reportTitle = 'تقرير المبيعات';
+                    reportContent = generateSalesReportHTML();
+                    break;
+                case 'expenses':
+                    reportTitle = 'تقرير المصاريف';
+                    reportContent = generateExpensesReportHTML();
+                    break;
+                case 'employees':
+                    reportTitle = 'تقرير الموظفين';
+                    reportContent = generateEmployeesReportHTML();
+                    break;
+                case 'users':
+                    reportTitle = 'تقرير المستخدمين';
+                    reportContent = generateUsersReportHTML();
+                    break;
+            }
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${reportTitle}</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; background: white; color: #2c3e50; }
+                        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #667eea; }
+                        .header h1 { color: #667eea; font-size: 28px; margin-bottom: 10px; }
+                        .header p { color: #7f8c8d; font-size: 14px; }
+                        .report-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+                        .report-info div { margin: 5px 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { padding: 12px; text-align: right; border: 1px solid #ddd; }
+                        th { background: #667eea; color: white; font-weight: 600; }
+                        tr:nth-child(even) { background: #f8f9fa; }
+                        tfoot { background: #f1f3f5; font-weight: 700; }
+                        @media print {
+                            body { padding: 10px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${restaurantName}</h1>
+                        <p>${restaurantAddress} | ${restaurantPhone}</p>
+                        <h2 style="color: #2c3e50; font-size: 22px; margin-top: 15px;">${reportTitle}</h2>
+                    </div>
+                    <div class="report-info">
+                        <div><strong>تاريخ التقرير:</strong> ${new Date().toLocaleDateString('ar-IQ')}</div>
+                        <div><strong>الوقت:</strong> ${new Date().toLocaleTimeString('ar-IQ')}</div>
+                    </div>
+                    ${reportContent}
+                    <div style="margin-top: 40px; text-align: center; color: #7f8c8d; font-size: 12px; border-top: 1px solid #ddd; padding-top: 15px;">
+                        <p>تم إنشاء هذا التقرير بواسطة نظام Cash Pro - شركة الإبداع الرقمي</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        // طباعة جميع التقارير
+        function printAllReports() {
+            const settings = LocalDB.get(LocalDB.KEYS.SETTINGS) || {};
+            const restaurantName = settings.restaurantName || 'اسم المطعم';
+            const restaurantAddress = settings.restaurantAddress || 'العنوان';
+            const restaurantPhone = settings.restaurantPhone || 'رقم الهاتف';
+            
+            const reports = [
+                { type: 'invoices', title: 'تقرير الفواتير الشامل', content: generateInvoicesReportHTML() },
+                { type: 'products', title: 'تقرير المنتجات', content: generateProductsReportHTML() },
+                { type: 'sales', title: 'تقرير المبيعات', content: generateSalesReportHTML() },
+                { type: 'expenses', title: 'تقرير المصاريف', content: generateExpensesReportHTML() },
+                { type: 'employees', title: 'تقرير الموظفين', content: generateEmployeesReportHTML() },
+                { type: 'users', title: 'تقرير المستخدمين', content: generateUsersReportHTML() }
+            ];
+            
+            let allReportsHTML = '';
+            reports.forEach((report, index) => {
+                allReportsHTML += `
+                    <div style="page-break-after: always;">
+                        <h2 style="color: #667eea; font-size: 24px; margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #667eea;">
+                            ${index + 1}. ${report.title}
+                        </h2>
+                        ${report.content}
+                    </div>
+                `;
+            });
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>التقارير الشاملة</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: 'Cairo', sans-serif; direction: rtl; padding: 20px; background: white; color: #2c3e50; }
+                        .header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #667eea; }
+                        .header h1 { color: #667eea; font-size: 32px; margin-bottom: 10px; }
+                        .header p { color: #7f8c8d; font-size: 14px; }
+                        .report-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+                        .report-info div { margin: 8px 0; font-size: 16px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { padding: 12px; text-align: right; border: 1px solid #ddd; }
+                        th { background: #667eea; color: white; font-weight: 600; }
+                        tr:nth-child(even) { background: #f8f9fa; }
+                        tfoot { background: #f1f3f5; font-weight: 700; }
+                        @media print {
+                            body { padding: 10px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${restaurantName}</h1>
+                        <p>${restaurantAddress} | ${restaurantPhone}</p>
+                        <h2 style="color: #2c3e50; font-size: 26px; margin-top: 15px;">التقارير الشاملة</h2>
+                    </div>
+                    <div class="report-info">
+                        <div><strong>تاريخ التقرير:</strong> ${new Date().toLocaleDateString('ar-IQ')}</div>
+                        <div><strong>الوقت:</strong> ${new Date().toLocaleTimeString('ar-IQ')}</div>
+                        <div><strong>عدد التقارير:</strong> ${reports.length} تقارير</div>
+                    </div>
+                    ${allReportsHTML}
+                    <div style="margin-top: 40px; text-align: center; color: #7f8c8d; font-size: 12px; border-top: 1px solid #ddd; padding-top: 15px;">
+                        <p>تم إنشاء هذه التقارير بواسطة نظام Cash Pro - شركة الإبداع الرقمي</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        // تحديث الإحصائيات عند فتح صفحة التقارير
+        const originalShowPage = showPage;
+        showPage = function(pageId) {
+            originalShowPage(pageId);
+            if (pageId === 'reportsPage') {
+                updateReportsStats();
+            }
+        };
+        
+        // ===================== نهاية نظام التقارير المتقدم =====================
+// ...existing code...
     </script>
 </body>
 </html>
